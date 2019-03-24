@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+Launch file to start laser processing node that turns a scan into a filtered
+point cloud.
+
+This node will expect a laser scan on /scan and publish a point cloud on /cloud.
+
+See https://wiki.ros.org/laser_filters for full documentation.
+-->
+<launch>
+  <node pkg="laser_filters"
+        type="scan_to_cloud_filter_chain"
+        name="point_cloud_filter">
+    <rosparam command="load"
+            file="$(find quickmcl)/filters/laser_config.yaml" />
+    <!-- <rosparam command="load" file="$(find quickmcl)/filters/cloud_config.yaml" /> -->
+    <param name="high_fidelity" value="false" />
+    <param name="target_frame" type="string" value="base_link" />
+    <remap from="cloud_filtered" to="cloud" />
+  </node>
+</launch>

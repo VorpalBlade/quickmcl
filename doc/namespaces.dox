@@ -1,0 +1,7 @@
+/**
+ * @namespace quickmcl
+ * @brief Main namespace of library.
+ * 
+ * @namespace quickmcl_node
+ * @brief Main namespace of node executable.
+ */

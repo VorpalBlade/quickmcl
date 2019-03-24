@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<!--
+Start the localisation node
+
+All the values in this file are the same as the default values.
+-->
+<launch>
+  <node name="quickmcl_node"
+        pkg="quickmcl"
+        type="node"
+        output="screen">
+    <!-- TF frame to work in, map expected to be in this frame. -->
+    <param name="fixed_frame" type="string" value="map" />
+    <!-- TF frame to localise. -->
+    <param name="localised_frame" type="string" value="base_link" />
+    <!-- TF frame to publish transform for (from fixed frame). -->
+    <param name="odom_frame" type="string" value="odom" />
+
+    <!-- How much to post-date transform, should be similar to delta between
+         scans. Helps rviz get less glitchy. -->
+    <param name="post_date_transform" type="double" value="0.1" />
+
+    <!-- If true, publish markers as a particle cloud to -->
+    <param name="publish_particles" type="bool" value="false" />
+
+    <!-- Topics used for inputs-->
+    <!-- Laser point cloud (sensor_msgs/PointCloud2) -->
+    <remap from="cloud" to="cloud" />
+    <!-- Map (nav_msgs/OccupancyGrid) -->
+    <remap from="map" to="map" />
+    <!-- Pose reset from rviz (geometry_msgs/PoseWithCovarianceStamped) -->
+    <remap from="initialpose" to="initialpose" />
+
+    <!-- Name of topics to publish to, for visualisation & debugging-->
+    <remap from="particles" to="particles" />
+    <remap from="likelihood_map" to="likelihood_map" />
+    <remap from="localisation_pose" to="localisation_pose" />
+
+
+    <!-- Parameters for motion model -->
+    <!-- Expected noise in odometry: Rotation noise from rotation -->
+    <param name="motion_model_alpha_1" type="double" value="0.05" />
+    <!-- Expected noise in odometry: Rotation noise from translation -->
+    <param name="motion_model_alpha_2" type="double" value="0.1" />
+    <!-- Expected noise in odometry: Translation noise from translation -->
+    <param name="motion_model_alpha_3" type="double" value="0.02" />
+    <!-- Expected noise in odometry: Translation noise from rotation -->
+    <param name="motion_model_alpha_4" type="double" value="0.05" />
+    <!-- Minimum translation for filter to update [m] -->
+    <param name="motion_model_min_trans" type="double" value="0.2" />
+    <!-- Minimum rotation for filter to update [rad] -->
+    <param name="motion_model_min_rot"
+           type="double"
+           value="0.5235987755982988" />
+
+
+    <!-- Parameters for particle filter -->
+    <!-- Number of particles (min) -->
+    <param name="particle_filter_particle_count_min" type="int" value="100" />
+    <!-- Number of particles (max) -->
+    <param name="particle_filter_particle_count_max" type="int" value="5000" />
+    <!-- How often (in filter updates) to resample -->
+    <param name="particle_filter_resample_count" type="int" value="2" />
+    <!-- Resample type: low_variance, adaptive, kld are valid
+         Note:
+         When using low_variance, only the min number of particles are used,
+         and alpha_fast/alpha_slow are not used.
+    -->
+    <param name="particle_filter_resample_type"
+           type="string"
+           value="kld" />
+
+    <!-- Low pass constant for adaptive/kld.
+         Set both fast and slow to 0 to disable adaptive sampling. -->
+    <param name="particle_filter_alpha_fast" type="double" value="0.0" />
+    <!-- Low pass constant for adaptive/kld.
+         Set both fast and slow to 0 to disable adaptive sampling. -->
+    <param name="particle_filter_alpha_slow" type="double" value="0.0" />
+
+    <!-- KLD epsilon parameter -->
+    <param name="particle_filter_kld_epsilon" type="double" value="0.05" />
+    <!-- KLD z_(1-\delta) parameter -->
+    <param name="particle_filter_kld_z" type="double" value="0.95" />
+
+    <!-- KLD/clustering bucket resolution x and y [m] -->
+    <param name="space_partitioning_resolution_xy"
+           type="double"
+           value="0.5" />
+    <!-- KLD/clustering bucket resolution rotation [rad] -->
+    <param name="space_partitioning_resolution_theta"
+           type="double"
+           value="0.17453292519943295" />
+
+    <!-- Parameters for sensor model (likelihood map) -->
+
+    <!-- These z-values should add up to 1, being "mixing factors" -->
+    <param name="likelihood_z_hit" type="double" value="0.9" />
+    <param name="likelihood_z_rand" type="double" value="0.1" />
+
+    <!-- Maximum laser distance [m] -->
+    <param name="likelihood_max_laser_distance" type="double" value="14.0" />
+
+    <!-- Maximum distance to compute obstacle distances for [m] -->
+    <param name="likelihood_max_obstacle_distance" type="double" value="2.0" />
+
+    <!-- Number of laser beams to use from the scan. This is a sub-sampling.
+         Set to 0 to use all (not recommended).
+    -->
+    <param name="likelihood_num_beams" type="int" value="30" />
+
+    <!--  Sigma of hit distribution [m] -->
+    <param name="likelihood_sigma_hit" type="double" value="0.1" />
+  </node>
+</launch>

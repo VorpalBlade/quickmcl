@@ -1,0 +1,10 @@
+scan_filter_chain:
+# Filter out known "bad" samples that have too short or too long range
+- name: range
+  type: LaserScanRangeFilter
+  params:
+    use_message_range_limits: false
+    lower_threshold: 0.05
+    upper_threshold: 15.5
+    lower_replacement_value: -.inf
+    upper_replacement_value: .inf
