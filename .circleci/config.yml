@@ -23,4 +23,4 @@ jobs:
           path: test_results
 
       - store_artifacts:
-path: code_coverage_results
+          path: code_coverage_results
