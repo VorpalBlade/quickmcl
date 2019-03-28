@@ -9,7 +9,7 @@ jobs:
           server_type: circle
           ros_release_name: kinetic
           ubuntu_version_name: xenial
-          used_modules: check_cache,check_build,check_install,code_coverage,software_tests
+          used_modules: check_cache,check_build,software_tests,check_install,cpp_code_coverage,codecov_tool
 
     steps:
       - checkout
