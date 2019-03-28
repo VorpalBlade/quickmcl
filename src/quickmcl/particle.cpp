@@ -15,11 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "quickmcl/particle.h"
 
+#include <ostream>
+
 //! @file
 //! @brief Definition of particle types and functions working on particle
 //!        collections.
 
 namespace quickmcl {
+
+std::ostream &operator<<(std::ostream &os, const WeightedParticle &particle)
+{
+  os << "[" << particle.data << ", " << particle.weight << "]";
+  return os;
+}
 
 double effective_particles(const ParticleCollection &particles)
 {

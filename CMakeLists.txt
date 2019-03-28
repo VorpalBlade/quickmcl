@@ -271,7 +271,9 @@ install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_node
 ## Add gtest based cpp test target and link libraries
 catkin_add_gtest(${PROJECT_NAME}-test
   test/quickmcl/test_distance_calculator.cpp
+  test/quickmcl/test_low_pass_filter.cpp
   test/quickmcl/test_particle.cpp
+  test/quickmcl/test_pose_2d.cpp
   test/quickmcl/test_scaled_map.cpp
   test/quickmcl/test_statistics.cpp
   test/quickmcl/test_utils.cpp

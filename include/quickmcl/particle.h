@@ -17,6 +17,7 @@
 
 #include "quickmcl/pose_2d.h"
 
+#include <iosfwd>
 #include <map>
 #include <vector>
 
@@ -43,6 +44,9 @@ struct WeightedParticle
   //! Weight of this particle.
   WeightType weight = 1.0;
 };
+
+//! Debug output operator
+std::ostream &operator<<(std::ostream &os, const WeightedParticle &particle);
 
 //! Type of the internal collection of particles
 using ParticleCollection = std::vector<WeightedParticle>;

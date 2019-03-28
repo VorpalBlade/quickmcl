@@ -32,6 +32,9 @@ namespace quickmcl {
 //! @tparam T Floating point type to use
 template<typename T = float> struct Pose2D
 {
+  //! Type of member
+  using Scalar = T;
+
   //! @name Position
   //! @{
   T x;
@@ -58,6 +61,9 @@ template<typename T = float> struct Pose2D
 
   //! Copy constructor
   Pose2D(const Pose2D<T> &other) = default;
+
+  //! Default copy assignment
+  Pose2D& operator=(const Pose2D<T> &other) = default;
 
   //! Conversion constructor
   template<typename U>

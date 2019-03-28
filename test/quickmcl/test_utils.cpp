@@ -14,6 +14,7 @@ TEST(TestUtils, normalise_angle)
   EXPECT_FLOAT_EQ(0, normalise_angle(-2 * M_PI));
   EXPECT_FLOAT_EQ(-M_PI + 0.1, normalise_angle(-3 * M_PI + 0.1));
   EXPECT_FLOAT_EQ(0, normalise_angle(-4 * M_PI));
+  EXPECT_FLOAT_EQ(-M_PI + 2, normalise_angle(M_PI + 2));
 }
 
 TEST(TestUtils, angle_delta)

@@ -29,6 +29,9 @@ namespace quickmcl {
 template<typename T = double> class LowPassFilter
 {
 public:
+  //! Type of scalar
+  using value_type = T;
+
   //! Set the filter constant
   inline void set_alpha(T alpha) { this->alpha = alpha; }
 

@@ -9,6 +9,23 @@ using testing::DoubleEq;
 using testing::Each;
 using testing::Field;
 
+TEST(TestParticle, effective_particles)
+{
+  ParticleCollection particles{
+      WeightedParticle{{0, 0, 0}, 1},
+      WeightedParticle{{0, 0, 0}, 1},
+      WeightedParticle{{0, 0, 0}, 1},
+  };
+  ParticleCollection particles_2{
+      WeightedParticle{{0, 0, 0}, 1},
+      WeightedParticle{{0, 0, 0}, 0},
+      WeightedParticle{{0, 0, 0}, 0},
+  };
+  equalise_particle_weights(&particles);
+  EXPECT_DOUBLE_EQ(3, effective_particles(particles));
+  EXPECT_DOUBLE_EQ(1, effective_particles(particles_2));
+}
+
 TEST(TestParticle, normalise_particle_weights)
 {
   ParticleCollection particles{
