@@ -1,16 +1,16 @@
 // QuickMCL - a computationally efficient MCL implementation for ROS
 // Copyright (C) 2019  Arvid Norlander
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "quickmcl/particle_filter.h"
@@ -54,7 +54,7 @@ void ParticleFilter::initialise(
   Eigen::Vector3f initial_pose{
       starting_point.x, starting_point.y, starting_point.theta};
   normal_random_variable<Eigen::Vector3f, Eigen::Matrix3f> pose_dist(
-      initial_pose, covariance, rng);
+      initial_pose, covariance, &rng);
 
   double weight = 1.0 / particle_count;
   // Create a cloud around the specified point
@@ -87,7 +87,7 @@ void ParticleFilter::handle_odometry(const Odometry &odom_new,
 {
 #if PF_DISABLE_ODOMETRY == 0
   sample_odometry(
-      odom_new, odom_old, data_sets[current_data_set].particles, rng, alpha);
+      odom_new, odom_old, &data_sets[current_data_set].particles, &rng, alpha);
 #endif
 }
 
@@ -95,7 +95,7 @@ void ParticleFilter::update_importance_from_observations(
     const LaserPointCloud &cloud)
 {
   auto total_weight =
-      map->update_importance(cloud, data_sets[current_data_set].particles);
+      map->update_importance(cloud, &data_sets[current_data_set].particles);
   // Scale weights, if non-zero total, if we have a zero total
   if (total_weight > 0) {
     normalise_weights(total_weight);
@@ -142,15 +142,15 @@ void ParticleFilter::resample_and_cluster()
 
   switch (parameters.resample_type) {
   case ResampleType::low_variance:
-    resample_low_variance(input_set.particles, output_set.particles);
+    resample_low_variance(input_set.particles, &output_set.particles);
     cluster();
     break;
   case ResampleType::adaptive:
-    resample_adaptive(input_set.particles, output_set.particles);
+    resample_adaptive(input_set.particles, &output_set.particles);
     cluster();
     break;
   case ResampleType::kld:
-    resample_kld(input_set, output_set);
+    resample_kld(input_set, &output_set);
     // Already clustered as a side effect of KLD sampling
     break;
   }
@@ -182,11 +182,11 @@ void ParticleFilter::set_parameters(
   w_slow.set_alpha(parameters.alpha_slow);
 }
 
-bool ParticleFilter::get_estimated_pose(Pose2D<double> &pose,
-                                        Eigen::Matrix3d &covariance) const
+bool ParticleFilter::get_estimated_pose(Pose2D<double> *pose,
+                                        Eigen::Matrix3d *covariance) const
 {
   ParticleCloudStatistics global_stats;
-  auto clusters = compute_cluster_statistics(global_stats);
+  auto clusters = compute_cluster_statistics(&global_stats);
 
   double best_weight = -1;
   const decltype(clusters)::value_type *best_cluster = nullptr;
@@ -198,9 +198,9 @@ bool ParticleFilter::get_estimated_pose(Pose2D<double> &pose,
     }
   }
   if (best_cluster && best_weight > 0) {
-    pose = best_cluster->as_pose();
+    *pose = best_cluster->as_pose();
     // Use global filter statistics for the covariance.
-    covariance = global_stats.covariance;
+    *covariance = global_stats.covariance;
     return true;
   } else {
     ROS_WARN_NAMED("particle_filter",
@@ -212,12 +212,12 @@ bool ParticleFilter::get_estimated_pose(Pose2D<double> &pose,
 
 void ParticleFilter::resample_low_variance(
     const ParticleCollection &input_particles,
-    ParticleCollection &output_particles)
+    ParticleCollection *output_particles)
 {
   const auto M = input_particles.size();
   decltype(WeightedParticle::weight) minv = 1.0f / M;
 
-  output_particles.resize(M);
+  output_particles->resize(M);
   // Get the offset
   auto dist = std::uniform_real_distribution<decltype(minv)>(0.f, minv);
   auto r = dist(rng);
@@ -227,26 +227,26 @@ void ParticleFilter::resample_low_variance(
     decltype(minv) U = r + m * minv;
     while (U > c) {
       i++;
-      // TODO: Handle wrap-around? Never seems to happen though...
+      // Handle wrap-around? Never seems to happen though...
       // Maybe because the collection size currently never changes and the
       // weights are normalised?
       assert(i < M);
       c += input_particles.at(i).weight;
     }
-    output_particles[m] = input_particles.at(i);
+    (*output_particles)[m] = input_particles.at(i);
   }
 }
 
 void ParticleFilter::resample_adaptive(
     const ParticleCollection &input_particles,
-    ParticleCollection &output_particles)
+    ParticleCollection *output_particles)
 {
   // Compute "adaptiveness-factor"
   const auto w_diff = std::max(0.0, 1.0 - w_fast.get() / w_slow.get());
 
   // if (w_diff > 0.0) {
   const auto output_size = static_cast<size_t>(parameters.particle_count_min);
-  output_particles.resize(output_size);
+  output_particles->resize(output_size);
   std::uniform_real_distribution<decltype(WeightedParticle::weight)> uni_dist(
       0, 1);
   // Create a precomputed map of total weights sums.
@@ -261,16 +261,16 @@ void ParticleFilter::resample_adaptive(
     auto p = uni_dist(rng);
     if (p < w_diff) {
       // Draw random particle
-      output_particles[m].data = map->generate_random_pose();
+      (*output_particles)[m].data = map->generate_random_pose();
       // Don't want the weight to affect the estimated pose, until next filter
       // iteration.
-      output_particles[m].weight = 0;
+      (*output_particles)[m].weight = 0;
     } else {
       // Draw as normal, using naive resampler. This relies on the weights
       // summing to 1.
       auto r = uni_dist(rng);
       auto index = intervals.lookup_index(r);
-      output_particles[m] = input_particles.at(index);
+      (*output_particles)[m] = input_particles.at(index);
     }
   }
   //} else {
@@ -289,7 +289,7 @@ void ParticleFilter::resample_adaptive(
   }
 }
 
-void ParticleFilter::resample_kld(const DataSet &input_set, DataSet &output_set)
+void ParticleFilter::resample_kld(const DataSet &input_set, DataSet *output_set)
 {
   // Reset KLD state.
   space_partitioning.reset();
@@ -297,8 +297,8 @@ void ParticleFilter::resample_kld(const DataSet &input_set, DataSet &output_set)
   const auto w_diff = std::max(0.0, 1.0 - w_fast.get() / w_slow.get());
 
   const auto max_particles = static_cast<size_t>(parameters.particle_count_max);
-  output_set.particles.clear();
-  output_set.particles.reserve(max_particles);
+  output_set->particles.clear();
+  output_set->particles.reserve(max_particles);
   std::uniform_real_distribution<decltype(WeightedParticle::weight)> uni_dist(
       0, 1);
   // Create a precomputed map of total weights sums.
@@ -316,16 +316,16 @@ void ParticleFilter::resample_kld(const DataSet &input_set, DataSet &output_set)
       // Note: We don't want the weight to affect the estimated pose, until next
       // filter iteration.
       WeightedParticle particle{map->generate_random_pose(), 0};
-      output_set.particles.push_back(particle);
+      output_set->particles.push_back(particle);
     } else {
       // Draw as normal, using naive resampler. This relies on the weights
       // summing to 1.
       auto r = uni_dist(rng);
       auto index = intervals.lookup_index(r);
-      output_set.particles.push_back(input_set.particles.at(index));
+      output_set->particles.push_back(input_set.particles.at(index));
     }
     // KLD stuff:
-    space_partitioning.add_point(output_set.particles.rbegin()->data);
+    space_partitioning.add_point(output_set->particles.rbegin()->data);
     // Check if we are done according to KLD.
     // ROS_INFO("KLD: %zu count=%zu", space_partitioning.limit(), m);
     if (m >= space_partitioning.limit()) {
@@ -348,22 +348,22 @@ void ParticleFilter::resample_kld(const DataSet &input_set, DataSet &output_set)
 
 void ParticleFilter::normalise_weights()
 {
-  normalise_particle_weights(data_sets[current_data_set].particles);
+  normalise_particle_weights(&data_sets[current_data_set].particles);
 }
 
 void ParticleFilter::normalise_weights(double total_weight)
 {
-  normalise_particle_weights(data_sets[current_data_set].particles,
+  normalise_particle_weights(&data_sets[current_data_set].particles,
                              total_weight);
 }
 
 void ParticleFilter::equalise_weights()
 {
-  equalise_particle_weights(data_sets[current_data_set].particles);
+  equalise_particle_weights(&data_sets[current_data_set].particles);
 }
 
 std::vector<ParticleCloudStatistics> ParticleFilter::compute_cluster_statistics(
-    ParticleCloudStatistics &global_statistics) const
+    ParticleCloudStatistics *global_statistics) const
 {
   std::vector<ParticleCloudStatistics> clusters(
       space_partitioning.get_cluster_count());
@@ -381,10 +381,10 @@ std::vector<ParticleCloudStatistics> ParticleFilter::compute_cluster_statistics(
 
   // Compute global cluster and finalise.
   for (auto &cluster : clusters) {
-    global_statistics.add(cluster);
+    global_statistics->add(cluster);
     cluster.finalise();
   }
-  global_statistics.finalise();
+  global_statistics->finalise();
 
   return clusters;
 }

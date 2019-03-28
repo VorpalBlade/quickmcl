@@ -1,16 +1,16 @@
 ﻿// QuickMCL - a computationally efficient MCL implementation for ROS
 // Copyright (C) 2019  Arvid Norlander
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
@@ -22,6 +22,7 @@
 
 #include <cstdint>
 #include <random>
+#include <vector>
 
 //! @file
 //! @brief Actual particle filter.
@@ -74,8 +75,8 @@ public:
   void set_parameters(const Parameters::ParticleFilter &parameters);
 
   //! Returns a single "average" pose, for localisation.
-  bool get_estimated_pose(Pose2D<double> &pose,
-                          Eigen::Matrix3d &covariance) const;
+  bool get_estimated_pose(Pose2D<double> *pose,
+                          Eigen::Matrix3d *covariance) const;
 
   //! Access collection (debugging purposes only)
   const ParticleCollection &get_particles() const
@@ -123,14 +124,14 @@ private:
 
   //! Implements low variance resampling.
   void resample_low_variance(const ParticleCollection &input_particles,
-                             ParticleCollection &output_particles);
+                             ParticleCollection *output_particles);
 
   //! Implements adaptive resampling
   void resample_adaptive(const ParticleCollection &input_particles,
-                         ParticleCollection &output_particles);
+                         ParticleCollection *output_particles);
 
   //! Implements adaptive resampling with KLD.
-  void resample_kld(const DataSet &input_set, DataSet &output_set);
+  void resample_kld(const DataSet &input_set, DataSet *output_set);
 
   //! Normalise the weights of all particles when the total isn't known
   inline void normalise_weights();
@@ -146,7 +147,7 @@ private:
   //! Compute the cluster statistics
   //! Since cluster ID 0 is invalid that is used for over-all filter statistics
   std::vector<ParticleCloudStatistics>
-  compute_cluster_statistics(ParticleCloudStatistics &global_statistics) const;
+  compute_cluster_statistics(ParticleCloudStatistics *global_statistics) const;
 };
 
 } // namespace quickmcl

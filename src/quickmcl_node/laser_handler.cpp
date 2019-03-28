@@ -1,16 +1,16 @@
 // QuickMCL - a computationally efficient MCL implementation for ROS
 // Copyright (C) 2019  Arvid Norlander
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "quickmcl_node/laser_handler.h"
@@ -60,7 +60,7 @@ public:
     // Subscribers
     laser_sub.reset(new LaserSubscriber(nh, "cloud", 10));
     laser_filter.reset(new LaserFilter(*laser_sub,
-                                       tf_reader->get_buffer(),
+                                       *tf_reader->get_buffer(),
                                        parameters->ros.odom_frame,
                                        100,
                                        nh));
@@ -77,7 +77,7 @@ public:
     quickmcl::CodeTimer laser_timer("Laser callback");
     // Get odometry
     quickmcl::Odometry odom_new;
-    if (!tf_reader->get_odometry_pose(msg->header.stamp, odom_new)) {
+    if (!tf_reader->get_odometry_pose(msg->header.stamp, &odom_new)) {
       ROS_ERROR("Failed to get odometry pose while handling laser");
       return;
     }
@@ -110,7 +110,7 @@ public:
 
     // Time to actually do something with the data:
     quickmcl::LaserPointCloud cloud;
-    quickmcl::from_ros_msg(msg, cloud);
+    quickmcl::from_ros_msg(msg, &cloud);
 
     // Check that we have at least some particles, this can be false since we
     // discard particles outside of free space in the map. If localisation gets
@@ -171,8 +171,7 @@ private:
   std::shared_ptr<quickmcl_node::Publishing> publishing;
 
   //! Store the previous odometry.
-  boost::optional<quickmcl::Odometry> odom_at_last_filter_run =
-      boost::none;
+  boost::optional<quickmcl::Odometry> odom_at_last_filter_run = boost::none;
 
   //! @name Subscribers
   //! @{

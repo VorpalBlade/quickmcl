@@ -1,16 +1,16 @@
 // QuickMCL - a computationally efficient MCL implementation for ROS
 // Copyright (C) 2019  Arvid Norlander
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "quickmcl/particle.h"
@@ -30,27 +30,27 @@ double effective_particles(const ParticleCollection &particles)
   return 1.0 / sum;
 }
 
-void normalise_particle_weights(ParticleCollection &particles)
+void normalise_particle_weights(ParticleCollection *particles)
 {
   double total_weight = 0;
-  for (const auto &p : particles) {
+  for (const auto &p : *particles) {
     total_weight += p.weight;
   }
   normalise_particle_weights(particles, total_weight);
 }
 
-void normalise_particle_weights(ParticleCollection &particles,
+void normalise_particle_weights(ParticleCollection *particles,
                                 double total_weight)
 {
-  for (auto &p : particles) {
+  for (auto &p : *particles) {
     p.weight /= total_weight;
   }
 }
 
-void equalise_particle_weights(ParticleCollection &particles)
+void equalise_particle_weights(ParticleCollection *particles)
 {
-  double avg_weight = 1.0 / particles.size();
-  for (auto &p : particles) {
+  double avg_weight = 1.0 / particles->size();
+  for (auto &p : *particles) {
     p.weight = avg_weight;
   }
 }

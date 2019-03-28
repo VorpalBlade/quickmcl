@@ -1,16 +1,16 @@
 // QuickMCL - a computationally efficient MCL implementation for ROS
 // Copyright (C) 2019  Arvid Norlander
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
@@ -43,7 +43,7 @@ class TFReader
 {
 public:
   //! Constructor
-  TFReader(const std::shared_ptr<quickmcl::Parameters> &parameters);
+  explicit TFReader(const std::shared_ptr<quickmcl::Parameters> &parameters);
 
   ~TFReader();
 
@@ -53,17 +53,19 @@ public:
   //! @param t          Time to get transform at.
   //! @param transform  Output variable for transform.
   //! @return  True on success otherwise false.
-  bool get_odometry_transform(const ros::Time &t, Eigen::Affine3d &transform);
+  bool get_odometry_transform(const ros::Time &t, Eigen::Affine3d *transform);
 
   //! @brief Get the odometry from TF at the specified time as an odometry pose.
   //!
   //! @param t     Time to get transform at.
   //! @param odom  Output variable for pose.
   //! @return  True on success otherwise false.
-  bool get_odometry_pose(const ros::Time &t, quickmcl::Odometry &odom);
+  bool get_odometry_pose(const ros::Time &t, quickmcl::Odometry *odom);
 
   //! Get the buffer, for use with message filters.
-  tf2_ros::Buffer &get_buffer();
+  //!
+  //! Ownership of pointer retained by this class.
+  tf2_ros::Buffer *get_buffer();
 
 private:
   //! Pimpl idiom

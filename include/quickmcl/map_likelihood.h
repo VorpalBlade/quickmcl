@@ -1,16 +1,16 @@
 // QuickMCL - a computationally efficient MCL implementation for ROS
 // Copyright (C) 2019  Arvid Norlander
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
@@ -21,6 +21,8 @@
 #include "quickmcl/parameters.h"
 #include "quickmcl/scaled_map.h"
 #include "quickmcl/config.h"
+
+#include <vector>
 
 #if MAP_LIKELIHOOD_DEBUG_PUB == 1
 #include <ros/ros.h>
@@ -48,7 +50,7 @@ public:
   void new_map(const nav_msgs::OccupancyGrid::ConstPtr &msg) override;
 
   double update_importance(const LaserPointCloud &cloud,
-                           ParticleCollection &particles) const override;
+                           ParticleCollection *particles) const override;
 
   WeightedParticle::ParticleT generate_random_pose() const override;
 

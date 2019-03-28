@@ -1,16 +1,16 @@
 // QuickMCL - a computationally efficient MCL implementation for ROS
 // Copyright (C) 2019  Arvid Norlander
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "quickmcl/distance_calculator.h"
@@ -94,7 +94,7 @@ DistanceCache create_distance_cache(float resolution, float max_dist)
   // Fill cache with Euclidean distances
   for (Eigen::Index col = 0; col < result.cols(); col++) {
     for (Eigen::Index row = 0; row < result.rows(); row++) {
-      result(row, col) = std::sqrt(float(col * col + row * row));
+      result(row, col) = std::sqrt(static_cast<float>(col * col + row * row));
     }
   }
   return result;
@@ -102,8 +102,8 @@ DistanceCache create_distance_cache(float resolution, float max_dist)
 
 void compute_distance_map(float max_dist,
                           const nav_msgs::OccupancyGrid &map,
-                          MapContainer &output,
-                          MapStateContainer &map_state)
+                          MapContainer *output,
+                          MapStateContainer *map_state)
 {
   auto height = map.info.height;
   auto width = map.info.width;
@@ -113,34 +113,34 @@ void compute_distance_map(float max_dist,
   Eigen::Array<bool, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> visited(
       height, width);
 
-  output.resize(height, width);
-  map_state.resize(height, width);
+  output->resize(height, width);
+  map_state->resize(height, width);
 
   std::priority_queue<CellInfo> cell_queue;
 
   // Copy all obstacles across, set them to 1, set every other cell to max_dist
-  for (Eigen::Index row = 0; row < output.rows(); row++) {
-    for (Eigen::Index col = 0; col < output.cols(); col++) {
+  for (Eigen::Index row = 0; row < output->rows(); row++) {
+    for (Eigen::Index col = 0; col < output->cols(); col++) {
       auto value = map.data[static_cast<size_t>(row * width + col)];
       visited(row, col) = false;
       if (value == -1) {
         // Unknown
-        output(row, col) = max_dist;
-        map_state(row, col) = MAP_STATE_UNKNOWN;
+        (*output)(row, col) = max_dist;
+        (*map_state)(row, col) = MAP_STATE_UNKNOWN;
       } else if (value < 35) {
         // Free space
-        output(row, col) = max_dist;
-        map_state(row, col) = MAP_STATE_FREE;
+        (*output)(row, col) = max_dist;
+        (*map_state)(row, col) = MAP_STATE_FREE;
       } else if (value > 65) {
         // Occupied
-        output(row, col) = 0;
-        map_state(row, col) = MAP_STATE_OCCUPIED;
-        cell_queue.push(CellInfo{&output, col, row, col, row});
+        (*output)(row, col) = 0;
+        (*map_state)(row, col) = MAP_STATE_OCCUPIED;
+        cell_queue.push(CellInfo{output, col, row, col, row});
         visited(row, col) = true;
       } else {
         // Unsure
-        output(row, col) = max_dist;
-        map_state(row, col) = MAP_STATE_UNKNOWN;
+        (*output)(row, col) = max_dist;
+        (*map_state)(row, col) = MAP_STATE_UNKNOWN;
       }
     }
   }
@@ -160,7 +160,7 @@ void compute_distance_map(float max_dist,
       return;
     }
 
-    output(y, x) = distance;
+    (*output)(y, x) = distance;
     CellInfo child = parent;
     child.x = x;
     child.y = y;
@@ -175,13 +175,13 @@ void compute_distance_map(float max_dist,
     if (cell_info.x > 0) {
       process_new_cell(cell_info, cell_info.x - 1, cell_info.y);
     }
-    if (cell_info.x < output.cols() - 1) {
+    if (cell_info.x < output->cols() - 1) {
       process_new_cell(cell_info, cell_info.x + 1, cell_info.y);
     }
     if (cell_info.y > 0) {
       process_new_cell(cell_info, cell_info.x, cell_info.y - 1);
     }
-    if (cell_info.y < output.rows() - 1) {
+    if (cell_info.y < output->rows() - 1) {
       process_new_cell(cell_info, cell_info.x, cell_info.y + 1);
     }
   }

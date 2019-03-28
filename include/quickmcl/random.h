@@ -1,16 +1,16 @@
 // QuickMCL - a computationally efficient MCL implementation for ROS
 // Copyright (C) 2019  Arvid Norlander
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
@@ -46,14 +46,14 @@ public:
                 "Mismatching scalar types");
 
   //! Constructor with zero mean and specific covariance.
-  normal_random_variable(const MatrixType &covar, std::mt19937 &gen)
+  normal_random_variable(const MatrixType &covar, std::mt19937 *gen)
     : normal_random_variable(VectorType::Zero(covar.rows()), covar, gen)
   {}
 
   //! Constructor with specific mean and covariance.
   normal_random_variable(const VectorType &mean,
                          const MatrixType &covar,
-                         std::mt19937 &gen)
+                         std::mt19937 *gen)
     : mean(mean)
     , gen(gen)
   {
@@ -66,7 +66,7 @@ public:
   VectorType operator()()
   {
     return mean + transform * VectorType{mean.size()}.unaryExpr(
-                                  [this](auto) { return dist(gen); });
+                                  [this](auto) { return dist(*gen); });
   }
 
 private:
@@ -76,7 +76,7 @@ private:
   MatrixType transform;
 
   //! Random number generator
-  std::mt19937 &gen;
+  std::mt19937 *gen;
   //! Univariate normal distribution
   std::normal_distribution<typename VectorType::Scalar> dist;
 };

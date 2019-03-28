@@ -1,16 +1,16 @@
 // QuickMCL - a computationally efficient MCL implementation for ROS
 // Copyright (C) 2019  Arvid Norlander
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
@@ -72,8 +72,8 @@ public:
   //! matrix.
   //!
   //! @return True if we could estimate a pose, otherwise false
-  virtual bool get_estimated_pose(Pose2D<double> &pose,
-                                  Eigen::Matrix3d &covariance) const = 0;
+  virtual bool get_estimated_pose(Pose2D<double> *pose,
+                                  Eigen::Matrix3d *covariance) const = 0;
 
   //! Access collection (debugging purposes only)
   virtual const ParticleCollection &get_particles() const = 0;

@@ -1,16 +1,16 @@
 // QuickMCL - a computationally efficient MCL implementation for ROS
 // Copyright (C) 2019  Arvid Norlander
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "quickmcl_node/tf_reader.h"
@@ -36,13 +36,13 @@ class TFReader::Impl
 {
 public:
   //! Constructor
-  Impl(const std::shared_ptr<quickmcl::Parameters> &parameters)
+  explicit Impl(const std::shared_ptr<quickmcl::Parameters> &parameters)
     : parameters(parameters)
     , tf_listener(tf_buffer)
   {}
 
   //! See parent class for documentation.
-  bool get_odometry_transform(const ros::Time &t, Eigen::Affine3d &transform)
+  bool get_odometry_transform(const ros::Time &t, Eigen::Affine3d *transform)
   {
     geometry_msgs::TransformStamped odom_transform_msg;
     try {
@@ -53,12 +53,12 @@ public:
                                                                << ex.what());
       return false;
     }
-    transform = tf2::transformToEigen(odom_transform_msg.transform);
+    *transform = tf2::transformToEigen(odom_transform_msg.transform);
     return true;
   }
 
   //! See parent class for documentation.
-  bool get_odometry_pose(const ros::Time &t, quickmcl::Odometry &odom)
+  bool get_odometry_pose(const ros::Time &t, quickmcl::Odometry *odom)
   {
     geometry_msgs::PoseStamped input;
     input.header.frame_id = parameters->ros.localised_frame;
@@ -74,14 +74,14 @@ public:
                                                           << ex.what());
       return false;
     }
-    odom.x = transformed.pose.position.x;
-    odom.y = transformed.pose.position.y;
-    odom.theta = tf2::getYaw(transformed.pose.orientation);
+    odom->x = transformed.pose.position.x;
+    odom->y = transformed.pose.position.y;
+    odom->theta = tf2::getYaw(transformed.pose.orientation);
     return true;
   }
 
   //! See parent class for documentation.
-  tf2_ros::Buffer &get_buffer() { return tf_buffer; }
+  tf2_ros::Buffer *get_buffer() { return &tf_buffer; }
 
 private:
   //! Global node handle
@@ -97,8 +97,7 @@ private:
   //! @}
 };
 
-TFReader::TFReader(
-    const std::shared_ptr<quickmcl::Parameters> &parameters)
+TFReader::TFReader(const std::shared_ptr<quickmcl::Parameters> &parameters)
   : impl(new Impl(parameters))
 {}
 
@@ -108,18 +107,17 @@ TFReader::~TFReader()
 }
 
 bool TFReader::get_odometry_transform(const ros::Time &t,
-                                      Eigen::Affine3d &transform)
+                                      Eigen::Affine3d *transform)
 {
   return impl->get_odometry_transform(t, transform);
 }
 
-bool TFReader::get_odometry_pose(const ros::Time &t,
-                                 quickmcl::Odometry &odom)
+bool TFReader::get_odometry_pose(const ros::Time &t, quickmcl::Odometry *odom)
 {
   return impl->get_odometry_pose(t, odom);
 }
 
-tf2_ros::Buffer &TFReader::get_buffer()
+tf2_ros::Buffer *TFReader::get_buffer()
 {
   return impl->get_buffer();
 }

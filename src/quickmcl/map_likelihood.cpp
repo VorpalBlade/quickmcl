@@ -1,16 +1,16 @@
 // QuickMCL - a computationally efficient MCL implementation for ROS
 // Copyright (C) 2019  Arvid Norlander
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "quickmcl/map_likelihood.h"
@@ -61,7 +61,7 @@ void MapLikelihood::new_map(const nav_msgs::OccupancyGrid::ConstPtr &msg)
       metadata.resolution * WorldCoordinate::Ones());
 
   MapContainer tmp;
-  compute_distance_map(parameters.max_obstacle_distance, *msg, tmp, map_state);
+  compute_distance_map(parameters.max_obstacle_distance, *msg, &tmp, &map_state);
   // Now pre-compute the probability at each point. AMCL does this for every
   // scan instead, probably because it supports dynamic reconfiguration of
   // parameters.
@@ -81,7 +81,7 @@ void MapLikelihood::new_map(const nav_msgs::OccupancyGrid::ConstPtr &msg)
 }
 
 double MapLikelihood::update_importance(const LaserPointCloud &cloud,
-                                        ParticleCollection &particles) const
+                                        ParticleCollection *particles) const
 {
   // Calculate step size to use.
   const size_t cloud_size = cloud.size();
@@ -97,7 +97,7 @@ double MapLikelihood::update_importance(const LaserPointCloud &cloud,
       parameters.z_rand / parameters.max_laser_distance;
 
   double total_weight = 0;
-  for (auto &particle : particles) {
+  for (auto &particle : *particles) {
 #if MAP_LIKELIHOOD_DEBUG_PUB == 1
     geometry_msgs::PoseArray msg;
     msg.header.stamp = ros::Time::now();

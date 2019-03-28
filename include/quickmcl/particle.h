@@ -1,21 +1,24 @@
 // QuickMCL - a computationally efficient MCL implementation for ROS
 // Copyright (C) 2019  Arvid Norlander
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
 #include "quickmcl/pose_2d.h"
+
+#include <map>
+#include <vector>
 
 //! @file
 //! @brief Definition of particle types and functions working on particle
@@ -50,17 +53,17 @@ using ParticleCollection = std::vector<WeightedParticle>;
 double effective_particles(const ParticleCollection &particles);
 
 //! Normalise the weights of all particles when the total isn't known
-void normalise_particle_weights(ParticleCollection &particles);
+void normalise_particle_weights(ParticleCollection *particles);
 
 //! Normalise the weights of all particles when the total is known
 //!
 //! @param particles     Particle cloud to operate on.
 //! @param total_weight  Known total weight
-void normalise_particle_weights(ParticleCollection &particles,
+void normalise_particle_weights(ParticleCollection *particles,
                                 double total_weight);
 
 //! Set all weights to be equal.
-void equalise_particle_weights(ParticleCollection &particles);
+void equalise_particle_weights(ParticleCollection *particles);
 
 //! @brief Running sum of weights in a particle collection
 //!
@@ -85,7 +88,7 @@ public:
   //! Constructor
   //!
   //! @param particles Particle cloud to compute running sum for
-  ParticlesRunningSum(const ParticleCollection &particles);
+  explicit ParticlesRunningSum(const ParticleCollection &particles);
 
   //! @brief Lookup particle index into the collection.
   inline size_t lookup_index(double weight) const

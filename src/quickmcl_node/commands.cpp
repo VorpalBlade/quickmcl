@@ -1,16 +1,16 @@
 // QuickMCL - a computationally efficient MCL implementation for ROS
 // Copyright (C) 2019  Arvid Norlander
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "quickmcl_node/commands.h"
@@ -76,8 +76,8 @@ public:
     cov.block(0, 2, 2, 1) = mapping.block(0, 5, 2, 1).cast<float>();
     cov.block(2, 0, 1, 2) = mapping.block(5, 0, 1, 2).cast<float>();
     cov(2, 2) = static_cast<float>(mapping(5, 5));
-    filter->initialise(
-        quickmcl::WeightedParticle::ParticleT(msg->pose.pose), cov);
+    filter->initialise(quickmcl::WeightedParticle::ParticleT(msg->pose.pose),
+                       cov);
     laser_handler->force_pose_reset();
   }
 
@@ -85,12 +85,11 @@ public:
   bool global_localization_callback(std_srvs::Empty::Request &,
                                     std_srvs::Empty::Response &)
   {
-    quickmcl::CodeTimer timer(
-        "Global localisation particle initialisation");
+    quickmcl::CodeTimer timer("Global localisation particle initialisation");
     // Trigger global localisation
     filter->global_localization();
-    // TODO: shouldn't there be a call here to:
-    // laser_handler->force_pose_reset();
+    // Shouldn't there be a call here to: laser_handler->force_pose_reset();
+    // Seems to work fine anyway though.
     return true;
   }
 
