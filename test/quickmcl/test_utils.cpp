@@ -39,3 +39,10 @@ TEST(TestUtils, angle_delta)
   EXPECT_FLOAT_EQ(0.1, angle_delta(M_PI, M_PI - 0.1));
   EXPECT_FLOAT_EQ(-0.1, angle_delta(M_PI, -M_PI + 0.1));
 }
+
+TEST(TestUtils, radians)
+{
+  EXPECT_DOUBLE_EQ(M_PI / 2, radians<double>(90.0));
+  EXPECT_FLOAT_EQ(-M_PI / 2, radians<float>(-90.0f));
+  EXPECT_FLOAT_EQ(0.0f, radians<float>(0.0f));
+}

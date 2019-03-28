@@ -53,7 +53,7 @@ TEST(TestDistanceCalculator, compute_distance_map)
     MAP_STATE_OCCUPIED, MAP_STATE_FREE, MAP_STATE_FREE, MAP_STATE_FREE, MAP_STATE_FREE,
     MAP_STATE_FREE, MAP_STATE_FREE, MAP_STATE_FREE, MAP_STATE_FREE, MAP_STATE_FREE;
 
-  compute_distance_map(max_dist, map, output, map_state);
+  compute_distance_map(max_dist, map, &output, &map_state);
   for (Eigen::Index y = 0; y < expected_output.cols(); y++) {
     for (Eigen::Index x = 0; x < expected_output.rows(); x++) {
       EXPECT_FLOAT_EQ(expected_output(y, x), output(y, x))

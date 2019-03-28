@@ -18,7 +18,7 @@ TEST(TestParticle, normalise_particle_weights)
       WeightedParticle{{0, 0, 0}, 0.0},
       WeightedParticle{{0, 0, 0}, 2.0},
   };
-  normalise_particle_weights(particles);
+  normalise_particle_weights(&particles);
 
   ParticleCollection normalised_particles{
       WeightedParticle{{0, 0, 0}, 0.2 / 3},
@@ -43,7 +43,7 @@ TEST(TestParticle, equalise_particle_weights)
       WeightedParticle{{0, 0, 0}, 0.0},
       WeightedParticle{{0, 0, 0}, 231.0},
   };
-  equalise_particle_weights(particles);
+  equalise_particle_weights(&particles);
   EXPECT_THAT(particles,
               Each(Field(&WeightedParticle::weight, DoubleEq(1.0 / 5.0))));
 }
