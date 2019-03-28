@@ -1,5 +1,8 @@
 # QuickMCL
 
+[![CircleCI](https://circleci.com/gh/VorpalBlade/quickmcl.svg?style=svg)](https://circleci.com/gh/VorpalBlade/quickmcl)
+[![codecov](https://codecov.io/gh/VorpalBlade/quickmcl/branch/master/graph/badge.svg)](https://codecov.io/gh/VorpalBlade/quickmcl)
+
 This package implements an MCL localisation node based on (Thrun et al., 2005)
 as well as on reverse engineering what [AMCL](https://wiki.ros.org/amcl) does.
 
