@@ -20,7 +20,7 @@
 #include <Eigen/Core>
 #include <cassert>
 
-#if MAP_LIKELIHOOD_DEBUG_PUB == 1
+#if QUICKMCL_MAP_LIKELIHOOD_DEBUG_PUB == 1
 #include <geometry_msgs/PoseArray.h>
 #endif
 
@@ -31,7 +31,7 @@ namespace quickmcl {
 
 MapLikelihood::MapLikelihood()
 {
-#if MAP_LIKELIHOOD_DEBUG_PUB == 1
+#if QUICKMCL_MAP_LIKELIHOOD_DEBUG_PUB == 1
   ros::NodeHandle nh;
   debug_pub = nh.advertise<geometry_msgs::PoseArray>("/debug", 10, false);
 #endif
@@ -98,7 +98,7 @@ double MapLikelihood::update_importance(const LaserPointCloud &cloud,
 
   double total_weight = 0;
   for (auto &particle : *particles) {
-#if MAP_LIKELIHOOD_DEBUG_PUB == 1
+#if QUICKMCL_MAP_LIKELIHOOD_DEBUG_PUB == 1
     geometry_msgs::PoseArray msg;
     msg.header.stamp = ros::Time::now();
     msg.header.frame_id = "map";
@@ -121,7 +121,7 @@ double MapLikelihood::update_importance(const LaserPointCloud &cloud,
       // stops being proper probability, since we add them together.
       weight += point_weight * point_weight * point_weight;
 
-#if MAP_LIKELIHOOD_DEBUG_PUB == 1
+#if QUICKMCL_MAP_LIKELIHOOD_DEBUG_PUB == 1
       // For debugging publish a pose at the relevant point, use angle to
       // indicate liklihood.
       auto debug_pose = Pose2D<double>(
@@ -142,7 +142,7 @@ double MapLikelihood::update_importance(const LaserPointCloud &cloud,
     }
 
     particle.weight = weight;
-#if MAP_LIKELIHOOD_DEBUG_PUB == 1
+#if QUICKMCL_MAP_LIKELIHOOD_DEBUG_PUB == 1
     debug_pub.publish(msg);
 #endif
   }

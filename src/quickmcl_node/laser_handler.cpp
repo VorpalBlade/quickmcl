@@ -96,7 +96,7 @@ public:
     bool has_moved = std::abs(diff.x) > parameters->motion_model.min_trans ||
                      std::abs(diff.y) > parameters->motion_model.min_trans ||
                      std::abs(diff.theta) > parameters->motion_model.min_rot;
-#if LASER_CALLBACK_IGNORE_NO_MOVE == 0
+#if QUICKMCL_LASER_CALLBACK_IGNORE_NO_MOVE == 0
     if (!pose_reset && !has_moved) {
       ROS_DEBUG("Skipping laser scan: haven't moved");
       // Publish cloud and pose anyway

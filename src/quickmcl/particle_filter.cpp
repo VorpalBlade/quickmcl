@@ -25,7 +25,7 @@
 #include <random>
 #include <ros/console.h>
 
-#if PF_DUMP_WEIGHTS_TO_FILE == 1
+#if QUICKMCL_PF_DUMP_WEIGHTS_TO_FILE == 1
 #include <fstream>
 #endif
 
@@ -47,7 +47,7 @@ void ParticleFilter::initialise(
   cloud.clear();
   cloud.reserve(particle_count);
 
-#if PF_FIXED_PARTICLE == 1
+#if QUICKMCL_PF_FIXED_PARTICLE == 1
   cloud.push_back(WeightedParticle{starting_point, 1});
   return;
 #endif
@@ -85,7 +85,7 @@ void ParticleFilter::handle_odometry(const Odometry &odom_new,
                                      const Odometry &odom_old,
                                      float alpha[4])
 {
-#if PF_DISABLE_ODOMETRY == 0
+#if QUICKMCL_PF_DISABLE_ODOMETRY == 0
   sample_odometry(
       odom_new, odom_old, &data_sets[current_data_set].particles, &rng, alpha);
 #endif
@@ -117,13 +117,13 @@ void ParticleFilter::update_importance_from_observations(
     // At least this way we will not get NaNs.
     equalise_weights();
   }
-#if PF_PRINT_PARTICLES_AFTER_SENSOR == 1
+#if QUICKMCL_PF_PRINT_PARTICLES_AFTER_SENSOR == 1
   for (const auto &p : particles[current_cloud]) {
     ROS_INFO_STREAM_NAMED("particle_filter",
                           "Particle " << p.data << ": " << p.weight);
   }
 #endif
-#if PF_DUMP_WEIGHTS_TO_FILE == 1
+#if QUICKMCL_PF_DUMP_WEIGHTS_TO_FILE == 1
   std::ofstream debug_data("weights.csv",
                            std::ios_base::app | std::ios_base::out);
   for (const auto &p : data_sets[current_data_set].particles) {

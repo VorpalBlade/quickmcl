@@ -24,7 +24,7 @@
 
 #include <vector>
 
-#if MAP_LIKELIHOOD_DEBUG_PUB == 1
+#if QUICKMCL_MAP_LIKELIHOOD_DEBUG_PUB == 1
 #include <ros/ros.h>
 #endif
 
@@ -101,7 +101,7 @@ private:
   //! and resolution.i
   MapState get_map_state_at(const WorldCoordinate &world_coord) const;
 
-#if MAP_LIKELIHOOD_DEBUG_PUB == 1
+#if QUICKMCL_MAP_LIKELIHOOD_DEBUG_PUB == 1
   ros::Publisher debug_pub;
 #endif
 };

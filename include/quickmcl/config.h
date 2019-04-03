@@ -22,7 +22,7 @@
 //! @{
 
 //! Debugging: Publish z_hit as a hijacked pose array
-#define MAP_LIKELIHOOD_DEBUG_PUB 0
+#define QUICKMCL_MAP_LIKELIHOOD_DEBUG_PUB 0
 
 //! @}
 
@@ -34,7 +34,7 @@
 //! Debugging: Use broken odometry, confusing variance for standard devation.
 //! The reason for this is to compare with default AMCL behaviour for debugging.
 //! Do not tune for this!
-#define ODOMETRY_USE_BROKEN 0
+#define QUICKMCL_ODOMETRY_USE_BROKEN 0
 
 //! @}
 
@@ -44,13 +44,13 @@
 //! @{
 
 //! Debugging: Generate a single fixed particle
-#define PF_FIXED_PARTICLE 0
+#define QUICKMCL_PF_FIXED_PARTICLE 0
 //! Debugging: disable odometry
-#define PF_DISABLE_ODOMETRY 0
+#define QUICKMCL_PF_DISABLE_ODOMETRY 0
 //! Debugging: Print particles after sensor update
-#define PF_PRINT_PARTICLES_AFTER_SENSOR 0
+#define QUICKMCL_PF_PRINT_PARTICLES_AFTER_SENSOR 0
 //! Debugging: Dump weights to csv file
-#define PF_DUMP_WEIGHTS_TO_FILE 0
+#define QUICKMCL_PF_DUMP_WEIGHTS_TO_FILE 0
 
 //! @}
 
@@ -61,6 +61,6 @@
 
 //! Debugging: define to ignore that the robot hasn't moved, and run particle
 //! filter anyway.
-#define LASER_CALLBACK_IGNORE_NO_MOVE 0
+#define QUICKMCL_LASER_CALLBACK_IGNORE_NO_MOVE 0
 
 //! @}

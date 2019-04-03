@@ -32,7 +32,7 @@ namespace {
 //! Create a normal distribution
 template<typename T> inline auto make_distribution(T variance)
 {
-#if ODOMETRY_USE_BROKEN == 1
+#if QUICKMCL_ODOMETRY_USE_BROKEN == 1
   return std::normal_distribution<T>(0, std::abs(variance));
 #else
   return std::normal_distribution<T>(0, std::sqrt(variance));
