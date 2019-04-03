@@ -184,12 +184,18 @@ add_library(${PROJECT_NAME}
   src/quickmcl/timer.cpp
 )
 
+set(QUICKMCL_POSE_TYPE float CACHE STRING
+    "Scalar data type for pose [float or double]")
+
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES})
+
+target_compile_definitions(${PROJECT_NAME} PUBLIC
+  QUICKMCL_POSE_TYPE=${QUICKMCL_POSE_TYPE})
 
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context

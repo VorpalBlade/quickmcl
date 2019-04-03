@@ -40,7 +40,7 @@ ParticleFilter::ParticleFilter(const std::shared_ptr<Map> &map)
 
 void ParticleFilter::initialise(
     const WeightedParticle::ParticleT &starting_point,
-    const Eigen::Matrix3f &covariance)
+    const WeightedParticle::ParticleT::EigenMatrix &covariance)
 {
   auto particle_count = static_cast<size_t>(parameters.particle_count_min);
   ParticleCollection &cloud = data_sets[current_data_set].particles;
@@ -51,10 +51,11 @@ void ParticleFilter::initialise(
   cloud.push_back(WeightedParticle{starting_point, 1});
   return;
 #endif
-  Eigen::Vector3f initial_pose{
+  WeightedParticle::ParticleT::EigenVector initial_pose{
       starting_point.x, starting_point.y, starting_point.theta};
-  normal_random_variable<Eigen::Vector3f, Eigen::Matrix3f> pose_dist(
-      initial_pose, covariance, &rng);
+  normal_random_variable<WeightedParticle::ParticleT::EigenVector,
+                         WeightedParticle::ParticleT::EigenMatrix>
+      pose_dist(initial_pose, covariance, &rng);
 
   double weight = 1.0 / particle_count;
   // Create a cloud around the specified point

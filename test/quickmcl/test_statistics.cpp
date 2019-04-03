@@ -75,13 +75,13 @@ TEST(TestStatistics, functionality)
 
   // And then compare to the expected values
   Eigen::Vector3d expected_mean{
-      0.98039215686274517, 1.2254901960784315, 0.18971050466256337};
+      0.98039215686274517, 1.2254901960784315, 0.18971050224686223};
   for (Eigen::Index i = 0; i < 3; i++) {
-    EXPECT_DOUBLE_EQ(expected_mean(i), stats_c.mean(i));
+    EXPECT_DOUBLE_EQ(expected_mean(i), stats_c.mean(i)) << "i = " << i;
   }
   Eigen::Matrix3d expected_covariance;
   expected_covariance << 1.7545174932718179, -0.64263744713571724, 0,
-      -0.64263744713571724, 0.66974240676662777, 0, 0, 0, -0.38069067304713533;
+      -0.64263744713571724, 0.66974240676662777, 0, 0, 0, -0.38069068615840829;
   for (Eigen::Index x = 0; x < 3; x++) {
     for (Eigen::Index y = 0; y < 3; y++) {
       EXPECT_DOUBLE_EQ(expected_covariance(y, x), stats_c.covariance(y, x))

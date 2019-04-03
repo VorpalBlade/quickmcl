@@ -34,6 +34,10 @@ template<typename T = float> struct Pose2D
 {
   //! Type of member
   using Scalar = T;
+  //! Matching eigen vector type
+  using EigenVector = Eigen::Matrix<Scalar, 3, 1>;
+  //! Matching eigen matrix type
+  using EigenMatrix = Eigen::Matrix<Scalar, 3, 3>;
 
   //! @name Position
   //! @{
@@ -143,8 +147,8 @@ template<typename T = float> struct Pose2D
     return Eigen::Vector4d{
         x,
         y,
-        std::sin(theta),
-        std::cos(theta),
+        std::sin(static_cast<double>(theta)),
+        std::cos(static_cast<double>(theta)),
     };
   }
 

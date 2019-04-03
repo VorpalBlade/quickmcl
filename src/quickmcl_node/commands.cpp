@@ -68,16 +68,17 @@ public:
                        << parameters->ros.fixed_frame << "\").");
     }
     // Extract covariance from message
-    Eigen::Matrix3f cov = Eigen::Matrix3f::Zero();
+    Eigen::Matrix3d cov = Eigen::Matrix3d::Zero();
     ConstRosCovarianceMapping mapping(msg->pose.covariance.data());
     // ROS has (x, y, z, rotX, rotY, rotZ)
     // We want to copy x, y, rotZ and the covariances
-    cov.block(0, 0, 2, 2) = mapping.block(0, 0, 2, 2).cast<float>();
-    cov.block(0, 2, 2, 1) = mapping.block(0, 5, 2, 1).cast<float>();
-    cov.block(2, 0, 1, 2) = mapping.block(5, 0, 1, 2).cast<float>();
-    cov(2, 2) = static_cast<float>(mapping(5, 5));
-    filter->initialise(quickmcl::WeightedParticle::ParticleT(msg->pose.pose),
-                       cov);
+    cov.block(0, 0, 2, 2) = mapping.block(0, 0, 2, 2);
+    cov.block(0, 2, 2, 1) = mapping.block(0, 5, 2, 1);
+    cov.block(2, 0, 1, 2) = mapping.block(5, 0, 1, 2);
+    cov(2, 2) = mapping(5, 5);
+    filter->initialise(
+        quickmcl::WeightedParticle::ParticleT(msg->pose.pose),
+        cov.cast<quickmcl::WeightedParticle::ParticleT::Scalar>());
     laser_handler->force_pose_reset();
   }
 

@@ -44,7 +44,7 @@ public:
   //! @param starting_point Central point of particle cloud
   //! @param covariance Covariance matrix (x, y, theta)
   void initialise(const WeightedParticle::ParticleT &starting_point,
-                  const Eigen::Matrix3f &covariance);
+                  const WeightedParticle::ParticleT::EigenMatrix &covariance);
 
   //! Trigger a global localization. Discards all particles and places them
   //! uniformly in the free space in map.

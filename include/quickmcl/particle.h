@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
+#include "quickmcl/config.h"
 #include "quickmcl/pose_2d.h"
 
 #include <iosfwd>
@@ -34,7 +35,7 @@ struct WeightedParticle
   //!
   //! To use something else, change here (and update the odometry & sensor
   //! models in the particle filter).
-  using ParticleT = Pose2D<float>;
+  using ParticleT = Pose2D<QUICKMCL_POSE_TYPE>;
 
   //! Type of weight
   using WeightType = double;

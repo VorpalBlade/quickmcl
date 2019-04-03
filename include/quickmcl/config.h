@@ -18,6 +18,18 @@
 //! @file
 //! @brief Build time configuration defines
 
+//! @name Overall
+//! @{
+
+//! Scalar type of pose coordinates
+#ifndef QUICKMCL_POSE_TYPE
+#define QUICKMCL_POSE_TYPE float
+#endif
+
+//! @}
+
+// ----------------------------------------------------------------------------
+
 //! @name Map
 //! @{
 

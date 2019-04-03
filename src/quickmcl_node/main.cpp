@@ -49,12 +49,11 @@ Node::Node()
   filter->set_parameters(parameters->particle_filter);
 
   // Set up particle filter
-  Eigen::Matrix3f cov;
+  quickmcl::WeightedParticle::ParticleT::EigenMatrix cov;
   cov << 0.5f * 0.5f, 0,    // ...
       0, 0, 0.5f * 0.5f, 0, // ...
       0, 0, 0.01f * 0.01f;
-  filter->initialise(quickmcl::WeightedParticle::ParticleT{0, 0, 0},
-                     cov);
+  filter->initialise(quickmcl::WeightedParticle::ParticleT{0, 0, 0}, cov);
 }
 
 void Node::setup()
