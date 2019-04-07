@@ -31,6 +31,7 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <depend>geometry_msgs</depend>
+  <depend>laser_geometry</depend>
   <depend>message_generation</depend>
   <depend>message_runtime</depend>
   <depend>nav_msgs</depend>

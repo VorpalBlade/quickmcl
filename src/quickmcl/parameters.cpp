@@ -108,6 +108,7 @@ void Parameters::load()
 
   nh.param("post_date_transform", ros.post_date_transform, 0.1);
   nh.param("publish_particles", ros.publish_particles, false);
+  nh.param("internal_laser_processing", ros.internal_laser_processing, false);
 
   //
   // Sanity checks

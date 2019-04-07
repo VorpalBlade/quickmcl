@@ -24,7 +24,9 @@
 #include "quickmcl_node/publishing.h"
 #include "quickmcl_node/tf_reader.h"
 
+#include <laser_geometry/laser_geometry.h>
 #include <message_filters/subscriber.h>
+#include <sensor_msgs/LaserScan.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <tf2_ros/buffer.h>
 
@@ -38,6 +40,88 @@
 //! @brief Source file for handling the laser messages
 
 namespace quickmcl_node {
+
+namespace {
+
+//! Type of callback to parent object
+using CloudCallback = std::function<void(const sensor_msgs::PointCloud2 &msg)>;
+
+template<typename LaserMessage> struct LaserSub
+{
+  //! See parent class for documentation.
+  LaserSub(const std::string &topic,
+           const std::string &odom_frame,
+           const std::string &localised_frame,
+           tf2_ros::Buffer *tf_buffer,
+           const CloudCallback &callback)
+    : callback(callback)
+    , localised_frame(localised_frame)
+    , tf_buffer(tf_buffer)
+  {
+    // Subscribers
+    laser_sub.reset(new LaserSubscriber(nh, topic, 10));
+    laser_filter.reset(
+        new LaserFilter(*laser_sub, *tf_buffer, odom_frame, 100, nh));
+    laser_filter->registerCallback(&LaserSub::laser_callback, this);
+  }
+
+  //! Callback for ROS laser scan message
+  void laser_callback(const typename LaserMessage::ConstPtr &msg);
+
+  //! Global node handle
+  ros::NodeHandle nh;
+
+  //! @name Subscribers
+  //! @{
+
+  //! Type of laser subscription
+  using LaserSubscriber = message_filters::Subscriber<LaserMessage>;
+  //! Type of laser message filter (scan)
+  using LaserFilter = tf2_ros::MessageFilter<LaserMessage>;
+
+  //! Special subscription used by @a laser_filter to sync the messages with TF
+  //! transforms
+  std::shared_ptr<LaserSubscriber> laser_sub;
+  //! Message filter for point cloud.
+  std::shared_ptr<LaserFilter> laser_filter;
+  //! @}
+
+  //! Laser projector class
+  laser_geometry::LaserProjection projector;
+
+  //! Callback to parent for processed point cloud
+  const CloudCallback callback;
+
+  //! Localised frame
+  const std::string localised_frame;
+
+  //! TF2 buffer object
+  tf2_ros::Buffer *const tf_buffer;
+};
+
+template<>
+void LaserSub<sensor_msgs::LaserScan>::laser_callback(
+    const sensor_msgs::LaserScan::ConstPtr &msg)
+{
+  sensor_msgs::PointCloud2 cloud;
+
+  {
+    quickmcl::CodeTimer laser_timer("Laser transform");
+    projector.transformLaserScanToPointCloud(
+        localised_frame, *msg, cloud, *tf_buffer, -1.0, 0);
+  }
+
+  callback(cloud);
+}
+
+template<>
+void LaserSub<sensor_msgs::PointCloud2>::laser_callback(
+    const sensor_msgs::PointCloud2::ConstPtr &msg)
+{
+  callback(*msg);
+}
+
+} // anonymous namespace
 
 //! Implementation class (pimpl idiom)
 class LaserHandler::Impl
@@ -58,26 +142,35 @@ public:
   void setup()
   {
     // Subscribers
-    laser_sub.reset(new LaserSubscriber(nh, "cloud", 10));
-    laser_filter.reset(new LaserFilter(*laser_sub,
-                                       *tf_reader->get_buffer(),
-                                       parameters->ros.odom_frame,
-                                       100,
-                                       nh));
-    laser_filter->registerCallback(&LaserHandler::Impl::laser_scan_callback,
-                                   this);
+    if (parameters->ros.internal_laser_processing) {
+      scan_sub.reset(new ScanSub("scan",
+                                 parameters->ros.odom_frame,
+                                 parameters->ros.localised_frame,
+                                 tf_reader->get_buffer(),
+                                 CloudCallback([this](const auto &msg) {
+                                   this->cloud_callback(msg);
+                                 })));
+    } else {
+      cloud_sub.reset(new CloudSub("cloud",
+                                   parameters->ros.odom_frame,
+                                   parameters->ros.localised_frame,
+                                   tf_reader->get_buffer(),
+                                   CloudCallback([this](const auto &msg) {
+                                     this->cloud_callback(msg);
+                                   })));
+    }
   }
 
   //! See parent class for documentation.
   void force_pose_reset() { pose_reset = true; }
 
   //! Callback for ROS laser scan message
-  void laser_scan_callback(const sensor_msgs::PointCloud2::ConstPtr &msg)
+  void cloud_callback(const sensor_msgs::PointCloud2 &msg)
   {
-    quickmcl::CodeTimer laser_timer("Laser callback");
+    quickmcl::CodeTimer laser_timer("Laser cloud processing");
     // Get odometry
     quickmcl::Odometry odom_new;
-    if (!tf_reader->get_odometry_pose(msg->header.stamp, &odom_new)) {
+    if (!tf_reader->get_odometry_pose(msg.header.stamp, &odom_new)) {
       ROS_ERROR("Failed to get odometry pose while handling laser");
       return;
     }
@@ -102,7 +195,7 @@ public:
       // Publish cloud and pose anyway
       filter->cluster();
       publishing->publish_cloud();
-      publishing->publish_estimated_pose(msg->header.stamp);
+      publishing->publish_estimated_pose(msg.header.stamp);
       return;
     }
 #endif
@@ -152,7 +245,7 @@ public:
 
     // Publish stuff
     publishing->publish_cloud();
-    publishing->publish_estimated_pose(msg->header.stamp);
+    publishing->publish_estimated_pose(msg.header.stamp);
   }
 
 private:
@@ -175,17 +268,12 @@ private:
 
   //! @name Subscribers
   //! @{
+  using ScanSub = LaserSub<sensor_msgs::LaserScan>;
+  using CloudSub = LaserSub<sensor_msgs::PointCloud2>;
 
-  //! Type of laser subscription
-  using LaserSubscriber = message_filters::Subscriber<sensor_msgs::PointCloud2>;
-  //! Type of laser message filter
-  using LaserFilter = tf2_ros::MessageFilter<sensor_msgs::PointCloud2>;
+  std::shared_ptr<ScanSub> scan_sub;
+  std::shared_ptr<CloudSub> cloud_sub;
 
-  //! Special subscription used by @a laser_filter to sync the messages with TF
-  //! transforms
-  std::shared_ptr<LaserSubscriber> laser_sub;
-  //! Message filter for point cloud.
-  std::shared_ptr<LaserFilter> laser_filter;
   //! @}
 
   //! Counter for how often to resample.

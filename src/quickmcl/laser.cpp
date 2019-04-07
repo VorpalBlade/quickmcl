@@ -22,8 +22,7 @@
 
 namespace quickmcl {
 
-void from_ros_msg(const sensor_msgs::PointCloud2::ConstPtr &msg,
-                  LaserPointCloud *output)
+void from_ros_msg(const sensor_msgs::PointCloud2 &msg, LaserPointCloud *output)
 {
   // PointCloud2 is a bit annoying in that it is a binary blob of data + a
   // header with field definitions, and we really only care about getting x,y.
@@ -31,7 +30,7 @@ void from_ros_msg(const sensor_msgs::PointCloud2::ConstPtr &msg,
   // valid beam or 0 otherwise), and everything is on a single plane anyway.
   //
   // As a result of all of this we will use PCL to help us convert this.
-  pcl::fromROSMsg(*msg, *output);
+  pcl::fromROSMsg(msg, *output);
 }
 
 } // namespace quickmcl

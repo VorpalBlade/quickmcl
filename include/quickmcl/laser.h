@@ -28,7 +28,6 @@ namespace quickmcl {
 using LaserPointCloud = pcl::PointCloud<pcl::PointXY>;
 
 //! Convert to a laser point cloud from a ROS point cloud 2 message.
-void from_ros_msg(const sensor_msgs::PointCloud2::ConstPtr &msg,
-                  LaserPointCloud *output);
+void from_ros_msg(const sensor_msgs::PointCloud2 &msg, LaserPointCloud *output);
 
 } // namespace quickmcl

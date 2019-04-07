@@ -23,9 +23,16 @@ All the values in this file are the same as the default values.
     <!-- If true, publish markers as a particle cloud to -->
     <param name="publish_particles" type="bool" value="false" />
 
+    <!-- If true, process /scan internally instead of relying on /cloud -->
+    <param name="internal_laser_processing" type="bool" value="false" />
+
     <!-- Topics used for inputs-->
-    <!-- Laser point cloud (sensor_msgs/PointCloud2) -->
+    <!-- Laser point cloud (sensor_msgs/PointCloud2)
+         (used if internal_laser_processing = False) -->
     <remap from="cloud" to="cloud" />
+    <!-- Laser scan (sensor_msgs/LaserScan)
+         (used if internal_laser_processing = True) -->
+    <remap from="scan" to="scan" />
     <!-- Map (nav_msgs/OccupancyGrid) -->
     <remap from="map" to="map" />
     <!-- Pose reset from rviz (geometry_msgs/PoseWithCovarianceStamped) -->

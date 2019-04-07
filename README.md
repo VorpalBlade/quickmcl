@@ -37,11 +37,7 @@ directory `doc_generated` by running `doxygen` in the directory of this file.
 ## Limitations
 
 Compared to AMCL:
- 
-* Only a single laser is supported, and it is expected to arrive as a ready made
-  point cloud in the base_link frame. See the
-  [launch file for the laser filter](launch/laser_filter.launch) for an example
-  of how a node that converts from the laser scan to a point cloud can look.
+
 * Only the likelihood field model is implemented, not the beam model.
 * No support for beam skipping.
 * Only odometry type implemented is differential drive.
@@ -52,6 +48,10 @@ Shared with AMCL:
 
 ## Extra features compared with AMCL
 
+* QuickMCL can either use a `PointCloud2` topic (in the `base_link` TF frame) or
+  a `LaserScan` topic for the sensor data. See the
+  [launch file for the laser filter](launch/laser_filter.launch) for an example
+  of how a node that converts from the laser scan to a point cloud can look.
 * Multiple resampling types implemented (low variance, adaptive, KLD).
 * Some parameters that are hard coded in AMCL (such as KLD bucket sizes) are
   tunable via ROS parameters.

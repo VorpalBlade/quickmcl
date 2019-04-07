@@ -129,6 +129,8 @@ struct Parameters
     double post_date_transform = 0.1;
     //! If true, publish particle cloud as markers
     bool publish_particles = false;
+    //! If true, process /scan internally instead of using external /cloud
+    bool internal_laser_processing = false;
   };
   //! Parameters for ROS communication (TF frame names etc)
   Ros ros;

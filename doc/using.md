@@ -7,11 +7,14 @@ This software expects to have the following topics with relevant information
 (these can all be remapped via the launch file in the standard ROS manner of
 course):
 
-* `/cloud` (`sensor_msgs/PointCloud2`): Laser point cloud in the `base_link` TF
-  frame. It is recommended to use the
-  [laser_filters](https://wiki.ros.org/laser_filters) package to convert a laser
-  scan to a point cloud. An [example launch file](../launch/laser_filter.launch)
-  for this is available.
+* One of (depending on the `internal_laser_processing` option):
+  * `/cloud` (`sensor_msgs/PointCloud2`): Laser point cloud in the `base_link` TF
+    frame. It is recommended to use the
+    [laser_filters](https://wiki.ros.org/laser_filters) package to convert a laser
+    scan to a point cloud. An [example launch file](../launch/laser_filter.launch)
+    for this is available. (`internal_laser_processing = false`)
+  * `/scan` (`sensor_msgs/LaserScan`): Laser scan in a TF frame convertable to
+    the `base_link` frame. (`internal_laser_processing = true`)
 * `/map` (`nav_msgs/OccupancyGrid`): Map to localise in. Consider using
   [map_server](https://wiki.ros.org/map_server) for this.
 * TF transforms (can be remapped via parameters, see below):
@@ -63,6 +66,9 @@ Other ROS communication parameters:
    valid a bit into the future.
 * `~publish_particles` (`bool`, default: false):
    If true, publish markers as a particle cloud to the topic `/particles`
+* `~internal_laser_processing` (`bool`, default: false):
+   If true, process laser directly from a scan internally instead of relying on
+   external conversion to a point cloud.
 
 ### Motion model
 

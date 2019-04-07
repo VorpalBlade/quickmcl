@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD 14)
 # catkin dependencies here.
 set(quickmcl_catkin_deps
     geometry_msgs
+    laser_geometry
     message_generation
     message_runtime
     nav_msgs
