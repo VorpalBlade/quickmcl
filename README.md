@@ -6,6 +6,9 @@
 This package implements an MCL localisation node based on (Thrun et al., 2005)
 as well as on reverse engineering what [AMCL](https://wiki.ros.org/amcl) does.
 
+The CPU and memory usage of QuickMCL compared to AMCL is analysed in
+[this blog post][performance], and it turns out QuickMCL is way better.
+
 This was done as course-work for a robotics master program, but I thought it
 turned out good enough it was worth putting it up publicly after the fact. I
 might make improvements to it after the fact if there is any interest in the
@@ -62,10 +65,12 @@ Shared with AMCL:
   * Clustering wraparound for the circle cut (pi/-pi) fixed.
     ([AMCL bug](https://github.com/ros-planning/navigation/issues/27))
 * Checks if particles are inside free space and penalises particles that aren't.
-* More efficient resampling with respect to performance when the number of
-  particles is large.
-* Lower memory usage than AMCL.
+* [More efficient resampling][performance] with respect to performance when the
+  number of particles is large.
+* [Lower memory usage][performance] than AMCL.
 
 ## References
 * Thrun, S., Burgard, W., Fox, D., 2005. Probabilistic robotics, Intelligent
   robotics and autonomous agents. MIT Press, Cambridge, Mass.
+
+[performance]: <https://vorpal.se/posts/2019/apr/07/quickmcl-vs-amcl-performance/>
