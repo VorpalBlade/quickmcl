@@ -40,9 +40,8 @@ The software will publish:
 * `/likelihood_map` (`nav_msgs/OccupancyGrid`): Modified internal map used for
   localisation. Useful for debugging. Intensity represents probability.
   distribution around obstacles based on distance from obstacles in `/map`.
-* `/localisation_pose` (`geometry_msgs/PoseWithCovarianceStamped`) is the topic
-  used to publish the best guess pose as well as covariance for the entire
-  filter.
+* `/quickmcl_pose` (`geometry_msgs/PoseWithCovarianceStamped`) is the topic used
+  to publish the best guess pose as well as covariance for the entire filter.
 * A TF transform from `map` -> `odom`.
 
 ## Parameters

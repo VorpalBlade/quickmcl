@@ -41,7 +41,7 @@ All the values in this file are the same as the default values.
     <!-- Name of topics to publish to, for visualisation & debugging-->
     <remap from="particles" to="particles" />
     <remap from="likelihood_map" to="likelihood_map" />
-    <remap from="localisation_pose" to="localisation_pose" />
+    <remap from="quickmcl_pose" to="quickmcl_pose" />
 
 
     <!-- Parameters for motion model -->

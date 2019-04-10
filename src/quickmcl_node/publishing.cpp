@@ -92,7 +92,7 @@ public:
     likelihood_pub =
         nh.advertise<nav_msgs::OccupancyGrid>("likelihood_map", 2, true);
     estimated_pose_pub = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>(
-        "localisation_pose", 2);
+        "quickmcl_pose", 2);
   }
 
   //! See parent class for documentation.
