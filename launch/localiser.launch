@@ -5,6 +5,17 @@ Start the localisation node
 All the values in this file are the same as the default values.
 -->
 <launch>
+  <!-- Overridable arguments for some common arguments -->
+  <arg name="publish_particles" default="false" />
+  <arg name="internal_laser" default="false" />
+  <arg name="motion_model_alpha_1" default="0.05" />
+  <arg name="motion_model_alpha_2" default="0.1" />
+  <arg name="motion_model_alpha_3" default="0.02" />
+  <arg name="motion_model_alpha_4" default="0.05" />
+  <arg name="particle_filter_kld_epsilon" default="0.05" />
+  <arg name="particle_filter_kld_z" default="0.95" />
+  <arg name="likelihood_sigma_hit" default="0.1" />
+
   <node name="quickmcl_node"
         pkg="quickmcl"
         type="node"
@@ -21,10 +32,12 @@ All the values in this file are the same as the default values.
     <param name="post_date_transform" type="double" value="0.1" />
 
     <!-- If true, publish markers as a particle cloud to -->
-    <param name="publish_particles" type="bool" value="false" />
+    <param name="publish_particles" type="bool" value="$(arg publish_particles)" />
 
     <!-- If true, process /scan internally instead of relying on /cloud -->
-    <param name="internal_laser_processing" type="bool" value="false" />
+    <param name="internal_laser_processing"
+           type="bool"
+           value="$(arg internal_laser)" />
 
     <!-- Topics used for inputs-->
     <!-- Laser point cloud (sensor_msgs/PointCloud2)
@@ -46,13 +59,21 @@ All the values in this file are the same as the default values.
 
     <!-- Parameters for motion model -->
     <!-- Expected noise in odometry: Rotation noise from rotation -->
-    <param name="motion_model_alpha_1" type="double" value="0.05" />
+    <param name="motion_model_alpha_1"
+           type="double"
+           value="$(arg motion_model_alpha_1)" />
     <!-- Expected noise in odometry: Rotation noise from translation -->
-    <param name="motion_model_alpha_2" type="double" value="0.1" />
+    <param name="motion_model_alpha_2"
+           type="double"
+           value="$(arg motion_model_alpha_2)" />
     <!-- Expected noise in odometry: Translation noise from translation -->
-    <param name="motion_model_alpha_3" type="double" value="0.02" />
+    <param name="motion_model_alpha_3"
+           type="double"
+           value="$(arg motion_model_alpha_3)" />
     <!-- Expected noise in odometry: Translation noise from rotation -->
-    <param name="motion_model_alpha_4" type="double" value="0.05" />
+    <param name="motion_model_alpha_4"
+           type="double"
+           value="$(arg motion_model_alpha_4)" />
     <!-- Minimum translation for filter to update [m] -->
     <param name="motion_model_min_trans" type="double" value="0.2" />
     <!-- Minimum rotation for filter to update [rad] -->
@@ -85,9 +106,13 @@ All the values in this file are the same as the default values.
     <param name="particle_filter_alpha_slow" type="double" value="0.0" />
 
     <!-- KLD epsilon parameter -->
-    <param name="particle_filter_kld_epsilon" type="double" value="0.05" />
+    <param name="particle_filter_kld_epsilon"
+           type="double"
+           value="$(arg particle_filter_kld_epsilon)" />
     <!-- KLD z_(1-\delta) parameter -->
-    <param name="particle_filter_kld_z" type="double" value="0.95" />
+    <param name="particle_filter_kld_z"
+           type="double"
+           value="$(arg particle_filter_kld_z)" />
 
     <!-- KLD/clustering bucket resolution x and y [m] -->
     <param name="space_partitioning_resolution_xy"
@@ -116,6 +141,8 @@ All the values in this file are the same as the default values.
     <param name="likelihood_num_beams" type="int" value="30" />
 
     <!--  Sigma of hit distribution [m] -->
-    <param name="likelihood_sigma_hit" type="double" value="0.1" />
+    <param name="likelihood_sigma_hit"
+           type="double"
+           value="$(arg likelihood_sigma_hit)" />
   </node>
 </launch>
