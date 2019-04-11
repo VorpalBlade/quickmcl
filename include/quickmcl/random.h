@@ -69,6 +69,9 @@ public:
                                   [this](auto) { return dist(*gen); });
   }
 
+  // Fix potential assert
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 private:
   //! Mean of this generator
   const VectorType mean;

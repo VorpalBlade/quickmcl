@@ -64,6 +64,9 @@ public:
   //! Gets the current resolutions [m / cell] per dimension.
   const WorldCoordinate &get_resolutions() const { return resolutions; }
 
+  // Fix potential assert
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 protected:
   //! Resolution of map [m / cell], per dimension
   WorldCoordinate resolutions;
@@ -133,6 +136,9 @@ public:
          resolutions.array())
             .matrix();
   }
+
+  // Fix potential assert
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 protected:
   //! Size of map in world coordinates

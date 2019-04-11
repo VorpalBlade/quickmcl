@@ -58,6 +58,8 @@ public:
   //! debugging with rviz.
   nav_msgs::OccupancyGrid get_likelihood_as_gridmap() const override;
 
+  // Fix potential assert
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 private:
   //! Parameters from command line / launch file
   Parameters::LikelihoodMap parameters;

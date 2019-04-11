@@ -88,6 +88,9 @@ public:
   //!         Valid range for clusters is [0, return value - 1].
   ClusterId get_cluster_count() const { return cluster_count; }
 
+  // Fix potential assert
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 private:
   //! Parameters
   Parameters::ParticleFilter parameters;

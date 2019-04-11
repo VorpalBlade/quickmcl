@@ -64,6 +64,9 @@ struct ParticleCloudStatistics
   {
     return Pose2D<double>(mean(0), mean(1), mean(2));
   }
+
+  // Fix potential assert
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 //! Stream operator for debugging.
