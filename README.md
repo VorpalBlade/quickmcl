@@ -60,8 +60,8 @@ Shared with AMCL:
   tunable via ROS parameters.
 * Code is more documented.
 * Some bugs in AMCL have not been "reimplemented"!
-  * Corrected computation of circular variance.
-    ([AMCL bug](https://github.com/ros-planning/navigation/issues/869))
+  * AMCL has incorrect variance handling in the odometry models by default. You
+    have to explicitly select "corrected" models with it.
   * Clustering wraparound for the circle cut (pi/-pi) fixed.
     ([AMCL bug](https://github.com/ros-planning/navigation/issues/27))
 * Checks if particles are inside free space and penalises particles that aren't.
