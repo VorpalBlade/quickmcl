@@ -94,6 +94,16 @@ TYPED_TEST(TestPose2D, conversion)
   EXPECT_FLOAT_EQ(1.0770037, r3(1));
 }
 
+TYPED_TEST(TestPose2D, as_position)
+{
+  auto v = typename TestFixture::PoseT(2, 1, 2);
+
+  auto dec = v.as_position();
+
+  EXPECT_FLOAT_EQ(2, dec(0));
+  EXPECT_FLOAT_EQ(1, dec(1));
+}
+
 TYPED_TEST(TestPose2D, to_decomposed)
 {
   auto v = typename TestFixture::PoseT(2, 1, 2);

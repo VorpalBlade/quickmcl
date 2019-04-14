@@ -39,6 +39,9 @@ template<typename T = float> struct Pose2D
   //! Matching eigen matrix type
   using EigenMatrix = Eigen::Matrix<Scalar, 3, 3>;
 
+  //! Matching eigen vector type for position part
+  using EigenPosition = Eigen::Matrix<Scalar, 2, 1>;
+
   //! @name Position
   //! @{
   T x;
@@ -67,7 +70,7 @@ template<typename T = float> struct Pose2D
   Pose2D(const Pose2D<T> &other) = default;
 
   //! Default copy assignment
-  Pose2D& operator=(const Pose2D<T> &other) = default;
+  Pose2D &operator=(const Pose2D<T> &other) = default;
 
   //! Conversion constructor
   template<typename U>
@@ -127,10 +130,13 @@ template<typename T = float> struct Pose2D
     return transform;
   }
 
+  //! Return just the position part.
+  EigenPosition as_position() const { return EigenPosition(x, y); }
+
   //! @brief Convert to 4D vector.
   //!
-  //! Useful for statistics, since this makes it possible to compute the mean in
-  //! theta as well.
+  //! Useful for statistics, since this makes it possible to compute the
+  //! mean in theta as well.
   //!
   //! @return Vector of x,y,sin(theta),cos(theta)
   inline Eigen::Vector4d to_decomposed() const
@@ -143,7 +149,6 @@ template<typename T = float> struct Pose2D
     // See also
     // https://stackoverflow.com/questions/491738/how-do-you-calculate-the-average-of-a-set-of-circular-data
     // for further discussion on this.
-    // x,y,sin(theta),cos(theta)
     return Eigen::Vector4d{
         x,
         y,
