@@ -17,6 +17,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <type_traits>
 
 //! @file
 //! @brief Some utility functions
@@ -58,7 +59,17 @@ template<typename T> constexpr T angle_delta(T a, T b)
 //! Convert degrees to radians
 template<typename T> constexpr inline T radians(T v)
 {
-  return v * M_PI / 180;
+  static_assert(std::is_floating_point<T>::value,
+                "You want a floating point type!");
+  return v * (M_PI / 180);
+}
+
+//! Convert radians to degrees
+template<typename T> constexpr inline T degrees(T v)
+{
+  static_assert(std::is_floating_point<T>::value,
+                "You want a floating point type!");
+  return v / (M_PI / 180);
 }
 
 } // namespace quickmcl
