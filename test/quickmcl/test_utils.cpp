@@ -7,7 +7,7 @@ using namespace quickmcl;
 TEST(TestUtils, normalise_angle)
 {
   EXPECT_FLOAT_EQ(0.f, normalise_angle(0.f));
-  EXPECT_FLOAT_EQ(0, normalise_angle(0));
+  EXPECT_DOUBLE_EQ(0.0, normalise_angle(0.0));
   EXPECT_FLOAT_EQ(0, normalise_angle(2 * M_PI));
   EXPECT_FLOAT_EQ(M_PI - 0.1, normalise_angle(3 * M_PI - 0.1));
   EXPECT_FLOAT_EQ(0, normalise_angle(4 * M_PI));
