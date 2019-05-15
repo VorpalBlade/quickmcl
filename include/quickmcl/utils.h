@@ -27,6 +27,8 @@ namespace quickmcl {
 //! @brief Ensure angle in [-pi,pi]
 template<typename T> T constexpr normalise_angle(T angle)
 {
+  static_assert(std::is_floating_point<T>::value,
+                "You want a floating point type!");
   // From
   // https://stackoverflow.com/questions/24234609/standard-way-to-normalize-an-angle-to-%CF%80-radians-in-java
   return angle - 2 * M_PI * std::floor((angle + M_PI) / (2 * M_PI));
@@ -35,6 +37,8 @@ template<typename T> T constexpr normalise_angle(T angle)
 //! @brief Compute smallest signed difference between two angles
 template<typename T> constexpr T angle_delta(T a, T b)
 {
+  static_assert(std::is_floating_point<T>::value,
+                "You want a floating point type!");
   // Based on
   // https://stackoverflow.com/questions/1878907/the-smallest-difference-between-2-angles
   // but made to return angled result indicating direction by doing quite a bit
