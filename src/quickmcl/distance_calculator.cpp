@@ -102,8 +102,7 @@ DistanceCache create_distance_cache(float resolution, float max_dist)
 
 void compute_distance_map(float max_dist,
                           const nav_msgs::OccupancyGrid &map,
-                          MapContainer *output,
-                          MapStateContainer *map_state)
+                          MapContainer *output)
 {
   auto height = map.info.height;
   auto width = map.info.width;
@@ -114,7 +113,6 @@ void compute_distance_map(float max_dist,
       height, width);
 
   output->resize(height, width);
-  map_state->resize(height, width);
 
   std::priority_queue<CellInfo> cell_queue;
 
@@ -126,21 +124,17 @@ void compute_distance_map(float max_dist,
       if (value == -1) {
         // Unknown
         (*output)(row, col) = max_dist;
-        (*map_state)(row, col) = MAP_STATE_UNKNOWN;
       } else if (value < 35) {
         // Free space
         (*output)(row, col) = max_dist;
-        (*map_state)(row, col) = MAP_STATE_FREE;
       } else if (value > 65) {
         // Occupied
         (*output)(row, col) = 0;
-        (*map_state)(row, col) = MAP_STATE_OCCUPIED;
         cell_queue.push(CellInfo{output, col, row, col, row});
         visited(row, col) = true;
       } else {
         // Unsure
         (*output)(row, col) = max_dist;
-        (*map_state)(row, col) = MAP_STATE_UNKNOWN;
       }
     }
   }
@@ -183,6 +177,33 @@ void compute_distance_map(float max_dist,
     }
     if (cell_info.y < output->rows() - 1) {
       process_new_cell(cell_info, cell_info.x, cell_info.y + 1);
+    }
+  }
+}
+
+void compute_state_map(const nav_msgs::OccupancyGrid &map,
+                       MapStateContainer *map_state)
+{
+  auto height = map.info.height;
+  auto width = map.info.width;
+  map_state->resize(height, width);
+
+  for (Eigen::Index row = 0; row < map_state->rows(); row++) {
+    for (Eigen::Index col = 0; col < map_state->cols(); col++) {
+      auto value = map.data[static_cast<size_t>(row * width + col)];
+      if (value == -1) {
+        // Unknown
+        (*map_state)(row, col) = MapState::Unknown;
+      } else if (value < 35) {
+        // Free space
+        (*map_state)(row, col) = MapState::Free;
+      } else if (value > 65) {
+        // Occupied
+        (*map_state)(row, col) = MapState::Occupied;
+      } else {
+        // Unsure
+        (*map_state)(row, col) = MapState::Unknown;
+      }
     }
   }
 }

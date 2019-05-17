@@ -16,6 +16,7 @@
 #pragma once
 
 #include "quickmcl/laser.h"
+#include "quickmcl/map_state.h"
 #include "quickmcl/parameters.h"
 #include "quickmcl/particle.h"
 
@@ -52,6 +53,11 @@ public:
   //! Get the likelihood map as an occupancy grid, for visualisation and
   //! debugging with rviz.
   virtual nav_msgs::OccupancyGrid get_likelihood_as_gridmap() const = 0;
+
+  //! Get the map state at the specified world pose. This takes care of offset
+  //! and resolution.i
+  virtual MapState
+  get_map_state_at(const Eigen::Vector2f &world_coord) const = 0;
 };
 
 } // namespace quickmcl

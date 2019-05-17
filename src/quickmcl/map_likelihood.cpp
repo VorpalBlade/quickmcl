@@ -50,34 +50,14 @@ void MapLikelihood::set_parameters(const Parameters::LikelihoodMap &parameters)
 
 void MapLikelihood::new_map(const nav_msgs::OccupancyGrid::ConstPtr &msg)
 {
-  // Store a copy of the metadata, we will need stuff from it.
-  metadata = msg->info;
-
-  // Note: We assume that there is no rotation here, otherwise it will be
-  // annoying.
-  reconfigure_from_map_size(
-      MapCoordinate{metadata.width, metadata.height},
-      WorldCoordinate{metadata.origin.position.x, metadata.origin.position.y},
-      metadata.resolution * WorldCoordinate::Ones());
+  MapBase::new_map(msg);
 
   MapContainer tmp;
-  compute_distance_map(parameters.max_obstacle_distance, *msg, &tmp, &map_state);
+  compute_distance_map(parameters.max_obstacle_distance, *msg, &tmp);
   // Now pre-compute the probability at each point. AMCL does this for every
   // scan instead, probably because it supports dynamic reconfiguration of
   // parameters.
   likelihood_data = (-(tmp * tmp) / z_hit_pre_calculated).exp();
-
-  // Pre-compute a vector of free spaces to allow uniform sampling from it.
-  free_cells.clear();
-  for (Eigen::Index y = 0; y < map_state.rows(); y++) {
-    for (Eigen::Index x = 0; x < map_state.cols(); x++) {
-      if (map_state(y, x) == MAP_STATE_FREE) {
-        free_cells.push_back(MapCoordinate(x, y));
-      }
-    }
-  }
-  free_cells_dist =
-      std::uniform_int_distribution<size_t>(0, free_cells.size() - 1);
 }
 
 double MapLikelihood::update_importance(const LaserPointCloud &cloud,
@@ -135,9 +115,9 @@ double MapLikelihood::update_importance(const LaserPointCloud &cloud,
     // obstacles or outside the known part of the map
     auto map_state =
         get_map_state_at(WorldCoordinate(particle.data.x, particle.data.y));
-    if (map_state == MAP_STATE_UNKNOWN) {
+    if (map_state == MapState::Unknown) {
       weight = 0;
-    } else if (map_state == MAP_STATE_OCCUPIED) {
+    } else if (map_state == MapState::Occupied) {
       weight *= 0.01;
     }
 
@@ -147,14 +127,6 @@ double MapLikelihood::update_importance(const LaserPointCloud &cloud,
 #endif
   }
   return total_weight;
-}
-
-WeightedParticle::ParticleT MapLikelihood::generate_random_pose() const
-{
-  WorldCoordinate free_cell = map_to_world(free_cells.at(free_cells_dist(rng)));
-
-  return WeightedParticle::ParticleT(
-      free_cell(0), free_cell(1), rotation_dist(rng));
 }
 
 nav_msgs::OccupancyGrid MapLikelihood::get_likelihood_as_gridmap() const
@@ -183,20 +155,6 @@ MapLikelihood::get_probability_at(const WorldCoordinate &world_coord) const
   double p = max_distance_probability;
   if (is_in_map(actual_pos)) {
     p = likelihood_data(actual_pos(1), actual_pos(0));
-  }
-  return p;
-}
-
-MapState
-MapLikelihood::get_map_state_at(const WorldCoordinate &world_coord) const
-{
-  // Convert to grid coordinates
-  MapCoordinate actual_pos = world_to_map(world_coord);
-
-  // Penalise being outside map.
-  MapState p = MAP_STATE_UNKNOWN;
-  if (is_in_map(actual_pos)) {
-    p = map_state(actual_pos(1), actual_pos(0));
   }
   return p;
 }

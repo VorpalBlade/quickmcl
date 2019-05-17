@@ -41,18 +41,23 @@ DistanceCache create_distance_cache(float resolution, float max_dist);
 //! @param max_dist   Maximum distance from obstacle to track
 //! @param map        Input map.
 //! @param output     Output map.
-//! @param map_state  Output map state
 //!
 //! This algorithm is based on AMCL, but encoded differently due to different
 //! map representations. In the output map:
 //! * Positive values < max_dist = Distance to nearest obstacle
 //! * max_dist = Free space, further away
 //! * 0 = Obstacle
-//!
-//! In the map_state variable, see documentation for MapStateContainer.
 void compute_distance_map(float max_dist,
                           const nav_msgs::OccupancyGrid &map,
-                          MapContainer *output,
-                          MapStateContainer *map_state);
+                          MapContainer *output);
+
+//! @brief Calculate a free/occupied/unknown map
+//!
+//! @param map        Input map.
+//! @param map_state  Output map.
+//!
+//!
+void compute_state_map(const nav_msgs::OccupancyGrid &map,
+                       MapStateContainer *map_state);
 
 } // namespace quickmcl

@@ -15,20 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
-#include "quickmcl/map_state.h"
-#include <Eigen/Core>
+#include <cstdint>
 
 //! @file
-//! @brief Common data type definition for map data.
+//! @brief Definition of Map state
 
 namespace quickmcl {
 
-//! Data type for map. Use row major to match the ROS occupancy grid.
-using MapContainer =
-    Eigen::Array<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-
-//! Data type for map meta-data. Use row major to match the ROS occupancy grid.
-using MapStateContainer =
-    Eigen::Array<MapState, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+//! Valued used in MapStateContainer
+enum class MapState : int8_t {
+  //! Space is free
+  Free = 0,
+  //! Space is occupied
+  Occupied = 1,
+  //! Space is unknown
+  Unknown = 2,
+};
 
 } // namespace quickmcl

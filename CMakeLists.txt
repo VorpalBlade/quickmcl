@@ -155,8 +155,10 @@ add_library(${PROJECT_NAME}
   include/quickmcl/laser.h
   include/quickmcl/low_pass_filter.h
   include/quickmcl/map.h
+  include/quickmcl/map_base.h
   include/quickmcl/map_factory.h
   include/quickmcl/map_likelihood.h
+  include/quickmcl/map_state.h
   include/quickmcl/map_types.h
   include/quickmcl/odometry.h
   include/quickmcl/parameters.h
@@ -172,6 +174,7 @@ add_library(${PROJECT_NAME}
   include/quickmcl/utils.h
   src/quickmcl/distance_calculator.cpp
   src/quickmcl/laser.cpp
+  src/quickmcl/map_base.cpp
   src/quickmcl/map_factory.cpp
   src/quickmcl/map_likelihood.cpp
   src/quickmcl/odometry.cpp

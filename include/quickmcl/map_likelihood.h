@@ -15,14 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
+#include "quickmcl/config.h"
 #include "quickmcl/laser.h"
-#include "quickmcl/map.h"
+#include "quickmcl/map_base.h"
 #include "quickmcl/map_types.h"
 #include "quickmcl/parameters.h"
 #include "quickmcl/scaled_map.h"
-#include "quickmcl/config.h"
-
-#include <vector>
 
 #if QUICKMCL_MAP_LIKELIHOOD_DEBUG_PUB == 1
 #include <ros/ros.h>
@@ -34,9 +32,7 @@
 namespace quickmcl {
 
 //! Map implementation based on likelihood model.
-class MapLikelihood final
-  : public Map
-  , private ScaledMapLogic<2>
+class MapLikelihood final : public MapBase
 {
 public:
   MapLikelihood();
@@ -52,8 +48,6 @@ public:
   double update_importance(const LaserPointCloud &cloud,
                            ParticleCollection *particles) const override;
 
-  WeightedParticle::ParticleT generate_random_pose() const override;
-
   //! Get the likelihood map as an occupancy grid, for visualisation and
   //! debugging with rviz.
   nav_msgs::OccupancyGrid get_likelihood_as_gridmap() const override;
@@ -64,9 +58,6 @@ private:
   //! Parameters from command line / launch file
   Parameters::LikelihoodMap parameters;
 
-  //! Metadata of the most recent map.
-  nav_msgs::MapMetaData metadata;
-
   //! The actual likelihood map, of the same dimension as the occupancy grid.
   //!
   //! If USE_DISTANCE_MAP is enabled, this is distances to occupied cells.
@@ -74,14 +65,9 @@ private:
   //! blur.
   MapContainer likelihood_data;
 
-  //! Map state for each cell.
-  MapStateContainer map_state;
-
   //! z_hit pre-calculation
   float z_hit_pre_calculated = 1;
 
-  //! Indices of free cells in map, used for generating random poses
-  std::vector<MapCoordinate> free_cells;
   //! Distribution for free cells.
   mutable std::uniform_int_distribution<size_t> free_cells_dist;
   //! Distribution for rotation
@@ -98,10 +84,6 @@ private:
   //! Get the probability at the specified world pose. This takes care of offset
   //! and resolution.
   double get_probability_at(const WorldCoordinate &world_coord) const;
-
-  //! Get the map state at the specified world pose. This takes care of offset
-  //! and resolution.i
-  MapState get_map_state_at(const WorldCoordinate &world_coord) const;
 
 #if QUICKMCL_MAP_LIKELIHOOD_DEBUG_PUB == 1
   ros::Publisher debug_pub;
