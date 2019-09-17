@@ -175,9 +175,13 @@ public:
       return;
     }
 
+    // Keep track of if we resampled, needed for sensible republishing
+    bool resampled = false;
+
     // If this is the first odometry, store it into the "last" odometry.
     if (!odom_at_last_filter_run) {
       odom_at_last_filter_run = odom_new;
+      resampled = true;
     }
 
     // Skip update if we aren't moving to preserve variance.
@@ -195,7 +199,7 @@ public:
       // Publish cloud and pose anyway
       filter->cluster();
       publishing->publish_cloud();
-      publishing->publish_estimated_pose(msg.header.stamp);
+      publishing->publish_estimated_pose(msg.header.stamp, resampled);
       return;
     }
 #endif
@@ -213,6 +217,7 @@ public:
       ROS_WARN("No particles... Trying global localisation!");
       quickmcl::CodeTimer odom_timer("Global localisation");
       filter->global_localization();
+      resampled = true;
     }
 
     {
@@ -233,6 +238,7 @@ public:
     // Resample?
     if (resample_counter++ %
         static_cast<uint32_t>(parameters->particle_filter.resample_count)) {
+      resampled = true;
       quickmcl::CodeTimer resampling_timer("Resampling");
       filter->resample_and_cluster();
       ROS_DEBUG_STREAM_NAMED("resampling",
@@ -245,7 +251,7 @@ public:
 
     // Publish stuff
     publishing->publish_cloud();
-    publishing->publish_estimated_pose(msg.header.stamp);
+    publishing->publish_estimated_pose(msg.header.stamp, resampled);
   }
 
 private:

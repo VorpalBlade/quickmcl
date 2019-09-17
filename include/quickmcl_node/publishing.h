@@ -60,7 +60,7 @@ public:
   void publish_cloud();
 
   //! Publishes the estimated pose.
-  void publish_estimated_pose(const ros::Time &t);
+  void publish_estimated_pose(const ros::Time &t, bool resampled);
 
 private:
   //! Pimpl idiom

@@ -148,9 +148,10 @@ public:
   }
 
   //! See parent class for documentation.
-  void publish_estimated_pose(const ros::Time &t)
+  void publish_estimated_pose(const ros::Time &t, bool resampled)
   {
     quickmcl::CodeTimer resampling_timer("Publishing pose & transform");
+
     Eigen::Affine3d odom_transform;
     if (!tf_reader->get_odometry_transform(t, &odom_transform)) {
       ROS_ERROR("Failed to get odom transform while publishing");
@@ -163,41 +164,59 @@ public:
     if (!filter->get_estimated_pose(&pose, &covariance)) {
       return;
     }
-    Eigen::Affine3d transform(pose);
-    {
-      // Now add in the reverse of the odometry transform, this gives us the
-      // transform from map to odom!
-      Eigen::Affine3d combined_transform(transform * odom_transform);
 
-      geometry_msgs::TransformStamped trans_msg(
-          tf2::eigenToTransform(combined_transform));
-      trans_msg.header.frame_id = parameters->ros.fixed_frame;
-      // Also set child frame ID.
-      trans_msg.child_frame_id = parameters->ros.odom_frame;
-      // Post date transform into the future slightly to fix flickering in rviz.
-      trans_msg.header.stamp =
-          t + ros::Duration(parameters->ros.post_date_transform);
-      transform_broadcaster.sendTransform(trans_msg);
-    }
+    if (resampled) {
+      Eigen::Affine3d transform(pose);
+      {
+        // Now add in the reverse of the odometry transform, this gives us the
+        // transform from map to odom!
+        last_transform = transform * odom_transform;
 
-    {
-      geometry_msgs::PoseWithCovarianceStamped estimated_pose;
-      estimated_pose.header.stamp = t;
-      estimated_pose.header.frame_id = parameters->ros.fixed_frame;
+        geometry_msgs::TransformStamped trans_msg(
+            tf2::eigenToTransform(last_transform));
+        trans_msg.header.frame_id = parameters->ros.fixed_frame;
+        // Also set child frame ID.
+        trans_msg.child_frame_id = parameters->ros.odom_frame;
+        // Post date transform into the future slightly to fix flickering in
+        // rviz.
+        trans_msg.header.stamp =
+            t + ros::Duration(parameters->ros.post_date_transform);
+        transform_broadcaster.sendTransform(trans_msg);
+      }
 
-      estimated_pose.pose.pose = geometry_msgs::Pose(pose);
-      // Copy covariance.
-      RosCovarianceMapping mapping(estimated_pose.pose.covariance.data());
-      // ROS has (x, y, z, rotX, rotY, rotZ)
-      // We want to copy x, y, rotZ and the covariances
-      //
-      // This is exactly the reverse of what we do with the initial pose.
-      mapping.block(0, 0, 2, 2) = covariance.block(0, 0, 2, 2);
-      mapping.block(0, 5, 2, 1) = covariance.block(0, 2, 2, 1);
-      mapping.block(5, 0, 1, 2) = covariance.block(2, 0, 1, 2);
-      mapping(5, 5) = covariance(2, 2);
+      {
+        geometry_msgs::PoseWithCovarianceStamped estimated_pose;
+        estimated_pose.header.stamp = t;
+        estimated_pose.header.frame_id = parameters->ros.fixed_frame;
 
-      estimated_pose_pub.publish(estimated_pose);
+        estimated_pose.pose.pose = geometry_msgs::Pose(pose);
+        // Copy covariance.
+        RosCovarianceMapping mapping(estimated_pose.pose.covariance.data());
+        // ROS has (x, y, z, rotX, rotY, rotZ)
+        // We want to copy x, y, rotZ and the covariances
+        //
+        // This is exactly the reverse of what we do with the initial pose.
+        mapping.block(0, 0, 2, 2) = covariance.block(0, 0, 2, 2);
+        mapping.block(0, 5, 2, 1) = covariance.block(0, 2, 2, 1);
+        mapping.block(5, 0, 1, 2) = covariance.block(2, 0, 1, 2);
+        mapping(5, 5) = covariance(2, 2);
+
+        estimated_pose_pub.publish(estimated_pose);
+      }
+    } else {
+      // Just republish previous transform with new timestamp
+      {
+        geometry_msgs::TransformStamped trans_msg(
+            tf2::eigenToTransform(last_transform));
+        trans_msg.header.frame_id = parameters->ros.fixed_frame;
+        // Also set child frame ID.
+        trans_msg.child_frame_id = parameters->ros.odom_frame;
+        // Post date transform into the future slightly to fix flickering in
+        // rviz.
+        trans_msg.header.stamp =
+            t + ros::Duration(parameters->ros.post_date_transform);
+        transform_broadcaster.sendTransform(trans_msg);
+      }
     }
   }
 
@@ -215,6 +234,9 @@ private:
   //! The TF reader class.
   std::shared_ptr<TFReader> tf_reader;
 
+  //! Most recent transform, will be republished in some cases
+  Eigen::Affine3d last_transform;
+
   //! @name ROS publishers
   //! @{
   //! Publishes particle cloud
@@ -228,11 +250,10 @@ private:
   //! @}
 };
 
-Publishing::Publishing(
-    const std::shared_ptr<quickmcl::Parameters> &parameters,
-    const std::shared_ptr<quickmcl::Map> &map,
-    const std::shared_ptr<quickmcl::IParticleFilter> &filter,
-    const std::shared_ptr<TFReader> &tf_reader)
+Publishing::Publishing(const std::shared_ptr<quickmcl::Parameters> &parameters,
+                       const std::shared_ptr<quickmcl::Map> &map,
+                       const std::shared_ptr<quickmcl::IParticleFilter> &filter,
+                       const std::shared_ptr<TFReader> &tf_reader)
   : impl(new Impl(parameters, map, filter, tf_reader))
 {}
 
@@ -256,9 +277,9 @@ void Publishing::publish_cloud()
   impl->publish_cloud();
 }
 
-void Publishing::publish_estimated_pose(const ros::Time &t)
+void Publishing::publish_estimated_pose(const ros::Time &t, bool resampled)
 {
-  impl->publish_estimated_pose(t);
+  impl->publish_estimated_pose(t, resampled);
 }
 
 } // namespace quickmcl_node
