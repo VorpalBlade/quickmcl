@@ -148,24 +148,24 @@ public:
   }
 
   //! See parent class for documentation.
-  void publish_estimated_pose(const ros::Time &t, bool resampled)
+  void publish_estimated_pose(const ros::Time &t, bool recompute_transform)
   {
     quickmcl::CodeTimer resampling_timer("Publishing pose & transform");
 
-    Eigen::Affine3d odom_transform;
-    if (!tf_reader->get_odometry_transform(t, &odom_transform)) {
-      ROS_ERROR("Failed to get odom transform while publishing");
-      return;
-    }
+    if (recompute_transform) {
+      Eigen::Affine3d odom_transform;
+      if (!tf_reader->get_odometry_transform(t, &odom_transform)) {
+        ROS_ERROR("Failed to get odom transform while publishing");
+        return;
+      }
 
-    // Prepare transform from map to localised frame
-    quickmcl::Pose2D<double> pose;
-    Eigen::Matrix3d covariance;
-    if (!filter->get_estimated_pose(&pose, &covariance)) {
-      return;
-    }
+      // Prepare transform from map to localised frame
+      quickmcl::Pose2D<double> pose;
+      Eigen::Matrix3d covariance;
+      if (!filter->get_estimated_pose(&pose, &covariance)) {
+        return;
+      }
 
-    if (resampled) {
       Eigen::Affine3d transform(pose);
       {
         // Now add in the reverse of the odometry transform, this gives us the
@@ -277,9 +277,10 @@ void Publishing::publish_cloud()
   impl->publish_cloud();
 }
 
-void Publishing::publish_estimated_pose(const ros::Time &t, bool resampled)
+void Publishing::publish_estimated_pose(const ros::Time &t,
+                                        bool recompute_transform)
 {
-  impl->publish_estimated_pose(t, resampled);
+  impl->publish_estimated_pose(t, recompute_transform);
 }
 
 } // namespace quickmcl_node

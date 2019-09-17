@@ -60,7 +60,12 @@ public:
   void publish_cloud();
 
   //! Publishes the estimated pose.
-  void publish_estimated_pose(const ros::Time &t, bool resampled);
+  //!
+  //! @param t                    Time of laser scan, transform post-dating will
+  //!                             be based on this.
+  //! @param recompute_transform  If true, recompute the TF transform, otherwise
+  //!                             republish previous one.
+  void publish_estimated_pose(const ros::Time &t, bool recompute_transform);
 
 private:
   //! Pimpl idiom
