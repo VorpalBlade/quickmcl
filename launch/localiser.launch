@@ -16,10 +16,13 @@ All the values in this file are the same as the default values.
   <arg name="particle_filter_kld_z" default="0.95" />
   <arg name="likelihood_sigma_hit" default="0.1" />
 
+  <arg name="post_date_transform" default="0.1" />
+  <arg name="output" default="screen" />
+
   <node name="quickmcl_node"
         pkg="quickmcl"
         type="node"
-        output="screen">
+        output="$(arg output)">
     <!-- TF frame to work in, map expected to be in this frame. -->
     <param name="fixed_frame" type="string" value="map" />
     <!-- TF frame to localise. -->
@@ -29,7 +32,7 @@ All the values in this file are the same as the default values.
 
     <!-- How much to post-date transform, should be similar to delta between
          scans. Helps rviz get less glitchy. -->
-    <param name="post_date_transform" type="double" value="0.1" />
+    <param name="post_date_transform" type="double" value="$(arg post_date_transform)" />
 
     <!-- If true, publish markers as a particle cloud to -->
     <param name="publish_particles" type="bool" value="$(arg publish_particles)" />
