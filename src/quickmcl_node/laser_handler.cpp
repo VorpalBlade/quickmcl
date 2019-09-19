@@ -204,6 +204,11 @@ public:
       return;
     }
 #endif
+    if (pose_reset) {
+      // If the pose was reset we need to recompute the transform for it to take
+      // effect.
+      recompute_transform = true;
+    }
     pose_reset = false;
 
     // Time to actually do something with the data:
