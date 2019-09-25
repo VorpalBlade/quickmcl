@@ -2,7 +2,7 @@
 <package format="2">
   <name>quickmcl</name>
   <version>0.5.0</version>
-  <description>The QuickMCL package</description>
+  <description>QuickMCL - Quick 2D Monte Carlo Localisation</description>
 
   <maintainer email="VorpalBlade@users.noreply.github.com">Arvid Norlander</maintainer>
   <author email="VorpalBlade@users.noreply.github.com">Arvid Norlander</author>
@@ -46,6 +46,8 @@
   <depend>visualization_msgs</depend>
 
   <build_depend>eigen</build_depend>
+  <test_depend>rosunit</test_depend>
+
   <!-- The export tag contains other, unspecified, tags -->
   <export>
     <!-- Other tools can request additional information be placed here -->

@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 # Because this is used in two places, just create a single variable with the
 # catkin dependencies here.
-set(quickmcl_catkin_deps
+set(${PROJECT_NAME}_catkin_deps
     geometry_msgs
     laser_geometry
     message_generation
@@ -27,7 +27,7 @@ set(quickmcl_catkin_deps
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  ${quickmcl_catkin_deps}
+  ${${PROJECT_NAME}_catkin_deps}
 )
 
 ## System dependencies are found with CMake's conventions
@@ -121,9 +121,9 @@ find_package(Eigen3 REQUIRED)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES quickmcl
+  LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS
-    ${quickmcl_catkin_deps}
+    ${${PROJECT_NAME}_catkin_deps}
   DEPENDS EIGEN3
 )
 
@@ -261,11 +261,14 @@ install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_node
 )
 
 ## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h"
+)
+
+install(DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch/
+)
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
@@ -279,19 +282,20 @@ install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_node
 #############
 
 ## Add gtest based cpp test target and link libraries
-catkin_add_gtest(${PROJECT_NAME}-test
-  test/quickmcl/test_distance_calculator.cpp
-  test/quickmcl/test_low_pass_filter.cpp
-  test/quickmcl/test_particle.cpp
-  test/quickmcl/test_pose_2d.cpp
-  test/quickmcl/test_scaled_map.cpp
-  test/quickmcl/test_statistics.cpp
-  test/quickmcl/test_utils.cpp
-  test/test_main.cpp
-)
-if (TARGET ${PROJECT_NAME}-test)
-  target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-endif ()
-
+if(CATKIN_ENABLE_TESTING)
+  catkin_add_gtest(${PROJECT_NAME}-test
+    test/quickmcl/test_distance_calculator.cpp
+    test/quickmcl/test_low_pass_filter.cpp
+    test/quickmcl/test_particle.cpp
+    test/quickmcl/test_pose_2d.cpp
+    test/quickmcl/test_scaled_map.cpp
+    test/quickmcl/test_statistics.cpp
+    test/quickmcl/test_utils.cpp
+    test/test_main.cpp
+  )
+  if (TARGET ${PROJECT_NAME}-test)
+    target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
+  endif ()
+endif()
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
