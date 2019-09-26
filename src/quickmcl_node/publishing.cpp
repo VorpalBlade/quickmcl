@@ -107,7 +107,7 @@ public:
   //! See parent class for documentation.
   void publish_cloud()
   {
-    if (!parameters->ros.publish_particles) {
+    if (!parameters->ros.publish_particles || particle_pub.getNumSubscribers() < 1) {
       return;
     }
 
