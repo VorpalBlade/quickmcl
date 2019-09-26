@@ -22,6 +22,8 @@
 #include "quickmcl_node/covariance_mappings.h"
 #include "quickmcl_node/tf_reader.h"
 
+#include <atomic>
+
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <nav_msgs/OccupancyGrid.h>
@@ -75,7 +77,8 @@ public:
        const std::shared_ptr<quickmcl::Map> &map,
        const std::shared_ptr<quickmcl::IParticleFilter> &filter,
        const std::shared_ptr<TFReader> &tf_reader)
-    : parameters(parameters)
+    : point_cloud_pub_enabled(false)
+    , parameters(parameters)
     , map(map)
     , filter(filter)
     , tf_reader(tf_reader)
@@ -86,13 +89,15 @@ public:
   {
     // Publishers
     if (parameters->ros.publish_particles) {
+      auto cb = std::bind(&Impl::cloud_connection_callback, this);
       particle_pub =
-          nh.advertise<visualization_msgs::MarkerArray>("particles", 4);
+          nh.advertise<visualization_msgs::MarkerArray>("particles", 1, cb, cb);
     }
     likelihood_pub =
         nh.advertise<nav_msgs::OccupancyGrid>("likelihood_map", 2, true);
+    auto cb = std::bind(&Impl::pose_connection_callback, this);
     estimated_pose_pub = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>(
-        "quickmcl_pose", 2);
+        "quickmcl_pose", 2, cb, cb);
   }
 
   //! See parent class for documentation.
@@ -107,7 +112,7 @@ public:
   //! See parent class for documentation.
   void publish_cloud()
   {
-    if (!parameters->ros.publish_particles || particle_pub.getNumSubscribers() < 1) {
+    if (!parameters->ros.publish_particles || !point_cloud_pub_enabled.load()) {
       return;
     }
 
@@ -184,6 +189,7 @@ public:
         transform_broadcaster.sendTransform(trans_msg);
       }
 
+      if (pose_pub_enabled.load())
       {
         geometry_msgs::PoseWithCovarianceStamped estimated_pose;
         estimated_pose.header.stamp = t;
@@ -223,6 +229,25 @@ public:
 private:
   //! Global node handle
   ros::NodeHandle nh;
+
+  //! Connection/disconnection callback, that allows us to only do work when
+  //! someone is subscribing to us.
+  void cloud_connection_callback()
+  {
+    point_cloud_pub_enabled.store(particle_pub.getNumSubscribers() > 0);
+  }
+
+  //! Connection/disconnection callback, that allows us to only do work when
+  //! someone is subscribing to us.
+  void pose_connection_callback()
+  {
+    pose_pub_enabled.store(estimated_pose_pub.getNumSubscribers() > 0);
+  }
+
+  //! Atomic variable for tracking if point cloud publication is enabled
+  std::atomic<bool> point_cloud_pub_enabled;
+  //! Atomic variable for tracking if pose publication is enabled
+  std::atomic<bool> pose_pub_enabled;
 
   //! Global parameters from launch file
   std::shared_ptr<quickmcl::Parameters> parameters;

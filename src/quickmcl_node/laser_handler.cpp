@@ -236,7 +236,7 @@ public:
       odom_at_last_filter_run = odom_new;
     }
     {
-      quickmcl::CodeTimer odom_timer("Sendor model");
+      quickmcl::CodeTimer sensor_timer("Sensor model");
       // Now send it to the filter
       filter->update_importance_from_observations(cloud);
     }
