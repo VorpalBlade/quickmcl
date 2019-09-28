@@ -78,6 +78,7 @@ public:
        const std::shared_ptr<quickmcl::IParticleFilter> &filter,
        const std::shared_ptr<TFReader> &tf_reader)
     : point_cloud_pub_enabled(false)
+    , pose_pub_enabled(false)
     , parameters(parameters)
     , map(map)
     , filter(filter)
