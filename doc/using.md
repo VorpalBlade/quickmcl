@@ -20,7 +20,6 @@ course):
 * TF transforms (can be remapped via parameters, see below):
   * `odom` -> `base_link`: This is the source of the odometry used.
 
-
 The software will estimate the true location of `base_link` in the map and based
 on that publish a transform `map` -> `odom`.
 
@@ -71,24 +70,25 @@ Other ROS communication parameters:
 * `~internal_laser_processing` (`bool`, default: false):
   If true, process laser directly from a scan internally instead of relying on
   external conversion to a point cloud.
+  **Does not support dynamic reconfiguration.**
 
 ### Initial pose
 
+None of these support dynamic reconfiguration. They are also written to unless
+`~save_pose_period` is 0.
+
 * `~initial_pose_x` (`double`, default: 0.0):
-  Initial pose (x component). Also written to unless `~save_pose_period` is 0.
+  Initial pose (x component). 
 * `~initial_pose_y` (`double`, default: 0.0):
-  Initial pose (y component). Also written to unless `~save_pose_period` is 0.
+  Initial pose (y component).
 * `~initial_pose_a` (`double`, default: 0.0):
-  Initial pose (θ component). Also written to unless `~save_pose_period` is 0.
+  Initial pose (θ component).
 * `~initial_cov_xx` (`double`, default: 0.5²):
-  Initial covariance (x² component). Also written to unless `~save_pose_period`
-  is 0.
+  Initial covariance (x² component).
 * `~initial_cov_yy` (`double`, default: 0.5²):
-  Initial covariance (y² component). Also written to unless `~save_pose_period`
-  is 0.
+  Initial covariance (y² component).
 * `~initial_cov_aa` (`double`, default: 0.1²):
-  Initial covariance (θ² component). Also written to unless `~save_pose_period`
-  is 0.
+  Initial covariance (θ² component).
 
 ### Motion model
 
@@ -120,9 +120,11 @@ These z-values should add up to 1, being "mixing factors":
 
 Parameters used to generate the internal likelihood map:
 * `~likelihood_sigma_hit` (`double`, default: 0.1):
-  Sigma of hit distribution [m]
+  Sigma of hit distribution [m].
+  **Does not support dynamic reconfiguration.**
 * `~likelihood_max_obstacle_distance` (`double`, default: 2.0):
   Maximum distance to compute obstacle distances for (for likelihood map) [m].
+  **Does not support dynamic reconfiguration.**
 
 Other sensor model parameters:
 * `~likelihood_max_laser_distance` (`double`, default: 14.0):

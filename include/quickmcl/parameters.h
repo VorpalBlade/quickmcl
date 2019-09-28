@@ -137,9 +137,6 @@ struct Parameters
   };
   //! Parameters for ROS communication (TF frame names etc)
   Ros ros;
-
-  //! Load parameters from ROS
-  void load();
 };
 
 } // namespace quickmcl
