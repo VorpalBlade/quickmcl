@@ -166,6 +166,7 @@ add_library(${PROJECT_NAME}
   include/quickmcl/particle_filter.h
   include/quickmcl/particle_filter_factory.h
   include/quickmcl/pose_2d.h
+  include/quickmcl/pose_restore.h
   include/quickmcl/random.h
   include/quickmcl/scaled_map.h
   include/quickmcl/space_partitioning.h
@@ -183,6 +184,7 @@ add_library(${PROJECT_NAME}
   src/quickmcl/particle_filter.cpp
   src/quickmcl/particle_filter_factory.cpp
   src/quickmcl/pose_2d.cpp
+  src/quickmcl/pose_restore.cpp
   src/quickmcl/space_partitioning.cpp
   src/quickmcl/statistics.cpp
   src/quickmcl/timer.cpp

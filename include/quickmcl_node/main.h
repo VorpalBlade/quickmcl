@@ -28,6 +28,7 @@ namespace quickmcl {
 class IParticleFilter;
 class Map;
 struct Parameters;
+class PoseRestorer;
 } // namespace quickmcl
 
 namespace quickmcl_node {
@@ -45,7 +46,10 @@ class Node
 {
 public:
   //! Constructor
-  Node();
+  //!
+  //! @param nh       Global node handle
+  //! @param nh_priv  Private node handle.
+  Node(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv);
 
   //! Set up subscriptions, publishers etc.
   void setup();
@@ -61,6 +65,9 @@ private:
   std::shared_ptr<quickmcl::Map> map;
   //! The particle filter itself.
   std::shared_ptr<quickmcl::IParticleFilter> filter;
+
+  //! Pose restorer/saver class
+  std::shared_ptr<quickmcl::PoseRestorer> pose_restorer;
 
   //! Class for reading data from TF
   std::shared_ptr<quickmcl_node::TFReader> tf_reader;

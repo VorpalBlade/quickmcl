@@ -127,6 +127,9 @@ struct Parameters
     //! needed for rviz to not get glitchy. Should be a really small value,
     //! similar to the delay between two scans.
     double post_date_transform = 0.1;
+    //! How often to store the pose back to the parameter server [s]
+    //! Set to 0.0 to disable.
+    double save_pose_period = 2.0;
     //! If true, publish particle cloud as markers
     bool publish_particles = false;
     //! If true, process /scan internally instead of using external /cloud

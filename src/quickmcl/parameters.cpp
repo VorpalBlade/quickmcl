@@ -106,6 +106,7 @@ void Parameters::load()
   nh.param<std::string>("localised_frame", ros.localised_frame, "base_link");
   nh.param<std::string>("odom_frame", ros.odom_frame, "odom");
 
+  nh.param("save_pose_period", ros.save_pose_period, 2.0);
   nh.param("post_date_transform", ros.post_date_transform, 0.1);
   nh.param("publish_particles", ros.publish_particles, false);
   nh.param("internal_laser_processing", ros.internal_laser_processing, false);

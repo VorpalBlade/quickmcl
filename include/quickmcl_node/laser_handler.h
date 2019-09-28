@@ -24,6 +24,7 @@
 namespace quickmcl {
 struct Parameters;
 class IParticleFilter;
+class PoseRestorer;
 } // namespace quickmcl
 
 namespace quickmcl_node {
@@ -43,7 +44,8 @@ public:
       const std::shared_ptr<quickmcl::Parameters> &parameters,
       const std::shared_ptr<quickmcl::IParticleFilter> &filter,
       const std::shared_ptr<TFReader> &tf_reader,
-      const std::shared_ptr<quickmcl_node::Publishing> &publishing);
+      const std::shared_ptr<Publishing> &publishing,
+      const std::shared_ptr<quickmcl::PoseRestorer> & pose_restorer);
 
   ~LaserHandler();
 

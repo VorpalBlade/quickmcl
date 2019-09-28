@@ -20,6 +20,7 @@
 #include "quickmcl/map_factory.h"
 #include "quickmcl/parameters.h"
 #include "quickmcl/particle_filter_factory.h"
+#include "quickmcl/pose_restore.h"
 #include "quickmcl/timer.h"
 #include "quickmcl_node/commands.h"
 #include "quickmcl_node/laser_handler.h"
@@ -34,13 +35,15 @@
 
 namespace quickmcl_node {
 
-Node::Node()
-  : parameters(new quickmcl::Parameters)
+Node::Node(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv)
+  : nh(nh)
+  , parameters(new quickmcl::Parameters)
   , map(quickmcl::create_likelihood_map())
   , filter(quickmcl::create_particle_filter(map))
+  , pose_restorer(new quickmcl::PoseRestorer(nh_priv, filter))
   , tf_reader(new TFReader(parameters))
   , publishing(new Publishing(parameters, map, filter, tf_reader))
-  , laser_handler(new LaserHandler(parameters, filter, tf_reader, publishing))
+  , laser_handler(new LaserHandler(parameters, filter, tf_reader, publishing, pose_restorer))
   , commands(new Commands(parameters, filter, laser_handler))
 {
   // Load parameters
@@ -48,12 +51,7 @@ Node::Node()
   map->set_parameters(parameters->likelihood_map);
   filter->set_parameters(parameters->particle_filter);
 
-  // Set up particle filter
-  quickmcl::WeightedParticle::ParticleT::EigenMatrix cov;
-  cov << 0.5f * 0.5f, 0,    // ...
-      0, 0, 0.5f * 0.5f, 0, // ...
-      0, 0, 0.01f * 0.01f;
-  filter->initialise(quickmcl::WeightedParticle::ParticleT{0, 0, 0}, cov);
+  pose_restorer->restore_pose();
 }
 
 void Node::setup()
@@ -81,8 +79,12 @@ int main(int argc, char **argv)
 {
   ros::init(argc, argv, "quickmcl");
 
+  // Create node handles
+  ros::NodeHandle nh;
+  ros::NodeHandle nh_priv("~");
+
   // Instantiate main class
-  quickmcl_node::Node node;
+  quickmcl_node::Node node(nh, nh_priv);
   node.setup();
   ros::spin();
 

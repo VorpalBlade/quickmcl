@@ -20,6 +20,7 @@
 #include "quickmcl/laser.h"
 #include "quickmcl/odometry.h"
 #include "quickmcl/parameters.h"
+#include "quickmcl/pose_restore.h"
 #include "quickmcl/timer.h"
 #include "quickmcl_node/publishing.h"
 #include "quickmcl_node/tf_reader.h"
@@ -131,11 +132,13 @@ public:
   Impl(const std::shared_ptr<quickmcl::Parameters> &parameters,
        const std::shared_ptr<quickmcl::IParticleFilter> &filter,
        const std::shared_ptr<TFReader> &tf_reader,
-       const std::shared_ptr<Publishing> &publishing)
+       const std::shared_ptr<Publishing> &publishing,
+       const std::shared_ptr<quickmcl::PoseRestorer> &pose_restorer)
     : parameters(parameters)
     , filter(filter)
     , tf_reader(tf_reader)
     , publishing(publishing)
+    , pose_restorer(pose_restorer)
   {}
 
   //! See parent class for documentation.
@@ -159,6 +162,8 @@ public:
                                      this->cloud_callback(msg);
                                    })));
     }
+    save_pose_period = ros::Duration(parameters->ros.save_pose_period);
+    save_pose_last_ts = ros::Time::now();
   }
 
   //! See parent class for documentation.
@@ -258,6 +263,13 @@ public:
     // Publish stuff
     publishing->publish_cloud();
     publishing->publish_estimated_pose(msg.header.stamp, recompute_transform);
+
+    ros::Time now = ros::Time::now();
+    if (!save_pose_period.isZero() &&
+        (now - save_pose_last_ts) >= save_pose_period) {
+      pose_restorer->store_pose();
+      save_pose_last_ts = now;
+    }
   }
 
 private:
@@ -274,6 +286,8 @@ private:
   std::shared_ptr<quickmcl_node::TFReader> tf_reader;
   //! Class for publishing.
   std::shared_ptr<quickmcl_node::Publishing> publishing;
+  //! Class for handling storing/restoring pose
+  std::shared_ptr<quickmcl::PoseRestorer> pose_restorer;
 
   //! Store the previous odometry.
   boost::optional<quickmcl::Odometry> odom_at_last_filter_run = boost::none;
@@ -285,7 +299,12 @@ private:
 
   std::shared_ptr<ScanSub> scan_sub;
   std::shared_ptr<CloudSub> cloud_sub;
+  //! @}
 
+  //! @name Pose saving
+  //! @{
+  ros::Duration save_pose_period;
+  ros::Time save_pose_last_ts;
   //! @}
 
   //! Counter for how often to resample.
@@ -300,8 +319,9 @@ LaserHandler::LaserHandler(
     const std::shared_ptr<quickmcl::Parameters> &parameters,
     const std::shared_ptr<quickmcl::IParticleFilter> &filter,
     const std::shared_ptr<TFReader> &tf_reader,
-    const std::shared_ptr<Publishing> &publishing)
-  : impl(new Impl(parameters, filter, tf_reader, publishing))
+    const std::shared_ptr<Publishing> &publishing,
+    const std::shared_ptr<quickmcl::PoseRestorer> &pose_restorer)
+  : impl(new Impl(parameters, filter, tf_reader, publishing, pose_restorer))
 {}
 
 LaserHandler::~LaserHandler()

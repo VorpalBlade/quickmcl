@@ -59,15 +59,36 @@ These parameters are for changing names when communicating with the rest of ROS:
 
 Other ROS communication parameters:
 
+* `save_pose_period` (`double`, default: 2.0):
+  How often (in seconds) to save the pose to the parameter server. This will be
+  reloaded on startup. Set to 0 to disable saving.
 * `~post_date_transform` (`double`, default: 0.1):
-   How much to post-date transform, should be similar to delta between scans.
-   Helps rviz get less glitchy and in general indicates that this estimate is
-   valid a bit into the future.
+  How much to post-date transform, should be similar to delta between scans.
+  Helps rviz get less glitchy and in general indicates that this estimate is
+  valid a bit into the future.
 * `~publish_particles` (`bool`, default: false):
-   If true, publish markers as a particle cloud to the topic `/particles`
+  If true, publish markers as a particle cloud to the topic `/particles`
 * `~internal_laser_processing` (`bool`, default: false):
-   If true, process laser directly from a scan internally instead of relying on
-   external conversion to a point cloud.
+  If true, process laser directly from a scan internally instead of relying on
+  external conversion to a point cloud.
+
+### Initial pose
+
+* `~initial_pose_x` (`double`, default: 0.0):
+  Initial pose (x component). Also written to unless `~save_pose_period` is 0.
+* `~initial_pose_y` (`double`, default: 0.0):
+  Initial pose (y component). Also written to unless `~save_pose_period` is 0.
+* `~initial_pose_a` (`double`, default: 0.0):
+  Initial pose (θ component). Also written to unless `~save_pose_period` is 0.
+* `~initial_cov_xx` (`double`, default: 0.5²):
+  Initial covariance (x² component). Also written to unless `~save_pose_period`
+  is 0.
+* `~initial_cov_yy` (`double`, default: 0.5²):
+  Initial covariance (y² component). Also written to unless `~save_pose_period`
+  is 0.
+* `~initial_cov_aa` (`double`, default: 0.1²):
+  Initial covariance (θ² component). Also written to unless `~save_pose_period`
+  is 0.
 
 ### Motion model
 
