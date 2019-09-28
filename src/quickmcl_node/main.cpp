@@ -24,6 +24,7 @@
 #include "quickmcl/timer.h"
 #include "quickmcl_node/commands.h"
 #include "quickmcl_node/laser_handler.h"
+#include "quickmcl_node/parameter_manager.h"
 #include "quickmcl_node/publishing.h"
 #include "quickmcl_node/tf_reader.h"
 
@@ -38,18 +39,18 @@ namespace quickmcl_node {
 Node::Node(const ros::NodeHandle &nh, const ros::NodeHandle &nh_priv)
   : nh(nh)
   , parameters(new quickmcl::Parameters)
+  , parameter_manager(new ParameterManager(parameters, nh_priv))
   , map(quickmcl::create_likelihood_map())
   , filter(quickmcl::create_particle_filter(map))
   , pose_restorer(new quickmcl::PoseRestorer(nh_priv, filter))
   , tf_reader(new TFReader(parameters))
   , publishing(new Publishing(parameters, map, filter, tf_reader))
-  , laser_handler(new LaserHandler(parameters, filter, tf_reader, publishing, pose_restorer))
+  , laser_handler(new LaserHandler(
+        parameters, filter, tf_reader, publishing, pose_restorer))
   , commands(new Commands(parameters, filter, laser_handler))
 {
-  // Load parameters
-  parameters->load();
+  parameter_manager->set_particle_filter(filter);
   map->set_parameters(parameters->likelihood_map);
-  filter->set_parameters(parameters->particle_filter);
 
   pose_restorer->restore_pose();
 }

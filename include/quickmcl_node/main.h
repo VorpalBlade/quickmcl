@@ -36,6 +36,7 @@ class Commands;
 class LaserHandler;
 class Publishing;
 class TFReader;
+class ParameterManager;
 } // namespace quickmcl_node
 
 // Main part of file
@@ -60,6 +61,7 @@ private:
 
   //! Global parameters from launch file
   std::shared_ptr<quickmcl::Parameters> parameters;
+  std::shared_ptr<quickmcl_node::ParameterManager> parameter_manager;
 
   //! Map object used for importance computations.
   std::shared_ptr<quickmcl::Map> map;

@@ -6,28 +6,33 @@ set(CMAKE_CXX_STANDARD 14)
 
 # Because this is used in two places, just create a single variable with the
 # catkin dependencies here.
-set(${PROJECT_NAME}_catkin_deps
+set(${PROJECT_NAME}_catkin_deps_private
+    dynamic_reconfigure
     geometry_msgs
     laser_geometry
     message_generation
     message_runtime
     nav_msgs
+    sensor_msgs
+    std_srvs
+    tf2_geometry_msgs
+    visualization_msgs
+)
+
+set(${PROJECT_NAME}_catkin_deps_public
     pcl_conversions
     pcl_ros
     roscpp
-    sensor_msgs
-    std_srvs
     tf2_eigen
-    tf2_geometry_msgs
     tf2_ros
-    visualization_msgs
 )
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  ${${PROJECT_NAME}_catkin_deps}
+  ${${PROJECT_NAME}_catkin_deps_private}
+  ${${PROJECT_NAME}_catkin_deps_public}
 )
 
 ## System dependencies are found with CMake's conventions
@@ -105,10 +110,9 @@ find_package(Eigen3 REQUIRED)
 ##     and list every .cfg file to be processed
 
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
-#   cfg/DynReconf1.cfg
-#   cfg/DynReconf2.cfg
-# )
+generate_dynamic_reconfigure_options(
+  cfg/QuickMCL.cfg
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -123,7 +127,7 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS
-    ${${PROJECT_NAME}_catkin_deps}
+    ${${PROJECT_NAME}_catkin_deps_public}
   DEPENDS EIGEN3
 )
 
@@ -211,13 +215,19 @@ add_executable(${PROJECT_NAME}_node
   include/quickmcl_node/covariance_mappings.h
   include/quickmcl_node/laser_handler.h
   include/quickmcl_node/main.h
+  include/quickmcl_node/parameter_manager.h
   include/quickmcl_node/publishing.h
   include/quickmcl_node/tf_reader.h
   src/quickmcl_node/commands.cpp
   src/quickmcl_node/laser_handler.cpp
   src/quickmcl_node/main.cpp
+  src/quickmcl_node/parameter_manager.cpp
   src/quickmcl_node/publishing.cpp
   src/quickmcl_node/tf_reader.cpp
+)
+
+add_dependencies(${PROJECT_NAME}_node
+  ${PROJECT_NAME}_gencfg
 )
 
 ## Rename C++ executable without prefix
