@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
-#include "quickmcl/utils.h"
-
 #include <cmath>
 #include <cstdint>
 #include <string>
@@ -81,7 +79,7 @@ struct Parameters
     //! Bucket resolution for KLD (x and y)
     float space_partitioning_resolution_xy = 0.5;
     //! Bucket resolution for KLD (angle)
-    float space_partitioning_resolution_theta = radians(10.0f);
+    float space_partitioning_resolution_theta = static_cast<float>(M_PI / 18);
   };
   //! Parameters for the particle filter.
   ParticleFilter particle_filter;

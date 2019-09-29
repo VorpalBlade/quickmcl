@@ -18,9 +18,13 @@
 
 #include "quickmcl/i_particle_filter.h"
 #include "quickmcl/parameters.h"
+#include "quickmcl/utils.h"
 
 #include <dynamic_reconfigure/server.h>
 #include <quickmcl/QuickMCLConfig.h>
+
+//! @file
+//! @brief Source file for QuickMCL parameter loading & dynamic reconfiguration
 
 namespace quickmcl_node {
 
@@ -157,8 +161,8 @@ private:
           std::abs(std::fmod(M_PI, config.space_partitioning_resolution_theta));
       if (rem > 0.0001) {
         ROS_ERROR_STREAM_NAMED("parameters",
-                               "Invalid kld_bucket_resolution_theta, needs to "
-                               "divide pi evenly but reminder is "
+                               "Invalid space_partitioning_resolution_theta, "
+                               "needs to divide pi evenly but reminder is "
                                    << rem);
       } else {
         parameters->particle_filter.space_partitioning_resolution_theta =
