@@ -60,7 +60,7 @@ double effective_particles(const ParticleCollection &particles);
 //! Normalise the weights of all particles when the total isn't known
 void normalise_particle_weights(ParticleCollection *particles);
 
-//! Normalise the weights of all particles when the total is known
+//! @brief Normalise the weights of all particles when the total is known
 //!
 //! @param particles     Particle cloud to operate on.
 //! @param total_weight  Known total weight
@@ -90,7 +90,7 @@ void equalise_particle_weights(ParticleCollection *particles);
 class ParticlesRunningSum
 {
 public:
-  //! Constructor
+  //! @brief Constructor
   //!
   //! @param particles Particle cloud to compute running sum for
   explicit ParticlesRunningSum(const ParticleCollection &particles);

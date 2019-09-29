@@ -62,7 +62,7 @@ public:
   //! @return  True on success otherwise false.
   bool get_odometry_pose(const ros::Time &t, quickmcl::Odometry *odom);
 
-  //! Get the buffer, for use with message filters.
+  //! @brief Get the buffer, for use with message filters.
   //!
   //! Ownership of pointer retained by this class.
   tf2_ros::Buffer *get_buffer();

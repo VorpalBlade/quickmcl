@@ -40,20 +40,19 @@ class LaserHandler
 {
 public:
   //! Constructor
-  LaserHandler(
-      const std::shared_ptr<quickmcl::Parameters> &parameters,
-      const std::shared_ptr<quickmcl::IParticleFilter> &filter,
-      const std::shared_ptr<TFReader> &tf_reader,
-      const std::shared_ptr<Publishing> &publishing,
-      const std::shared_ptr<quickmcl::PoseRestorer> & pose_restorer);
+  LaserHandler(const std::shared_ptr<quickmcl::Parameters> &parameters,
+               const std::shared_ptr<quickmcl::IParticleFilter> &filter,
+               const std::shared_ptr<TFReader> &tf_reader,
+               const std::shared_ptr<Publishing> &publishing,
+               const std::shared_ptr<quickmcl::PoseRestorer> &pose_restorer);
 
   ~LaserHandler();
 
   //! Set up subscriptions, publishers etc.
   void setup();
 
-  //! Used to force calculating particle weights even when not moving after a
-  //! pose reset from rviz.
+  //! @brief Used to force calculating particle weights even when not moving
+  //!        after a pose reset from rviz.
   void force_pose_reset();
 
 private:

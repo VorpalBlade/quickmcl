@@ -54,8 +54,8 @@ public:
         .matrix();
   }
 
-  //! Updates the resolution. It is up to the user to ensure the data is
-  //! rescaled for this!
+  //! @brief Updates the resolution. It is up to the user to ensure the data is
+  //!        rescaled for this!
   void set_resolutions(const WorldCoordinate &resolutions)
   {
     this->resolutions = resolutions;

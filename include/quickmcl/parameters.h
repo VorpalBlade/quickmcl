@@ -95,15 +95,15 @@ struct Parameters
     float z_rand = 0.5f;
     //! @}
 
-    //! Number of points from the point clouds to consider, will be evenly
-    //! spaced.
+    //! @brief Number of points from the point clouds to consider, will be
+    //!        evenly spaced.
     int32_t num_beams = 30;
 
     //! Maximum laser distance, anything beyond this will be ignored.
     float max_laser_distance = 14.0f;
 
-    //! Maximum distance to consider obstacles at (when using USE_DISTANCE_MAP).
-    //! This is in meters.
+    //! @brief Maximum distance to consider obstacles at (when using
+    //!        USE_DISTANCE_MAP). This is in meters.
     float max_obstacle_distance = 2.0f;
 
     //! Standard deviation of hit distribution
@@ -121,11 +121,13 @@ struct Parameters
     std::string localised_frame;
     //! TF2 reference frame to publish transform for odometry (odom).
     std::string odom_frame;
-    //! How much to post-date the published transform by (similar to AMCL),
-    //! needed for rviz to not get glitchy. Should be a really small value,
-    //! similar to the delay between two scans.
+    //! @brief How much to post-date the published transform by (similar to
+    //!        AMCL), needed for rviz to not get glitchy.
+    //!
+    //! Should be a really small value, similar to the delay between two scans.
     double post_date_transform = 0.1;
-    //! How often to store the pose back to the parameter server [s]
+    //! @brief How often to store the pose back to the parameter server [s]
+    //!
     //! Set to 0.0 to disable.
     double save_pose_period = 2.0;
     //! If true, publish particle cloud as markers

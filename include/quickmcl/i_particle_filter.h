@@ -32,18 +32,20 @@ class IParticleFilter
 public:
   virtual ~IParticleFilter() = default;
 
-  //! Initialise to "known" position (as a normal distribution).
+  //! @brief Initialise to "known" position (as a normal distribution).
   //!
   //! @param starting_point Central point of particle cloud
   //! @param covariance Covariance matrix (x, y, theta)
-  virtual void initialise(const WeightedParticle::ParticleT &starting_point,
-                          const WeightedParticle::ParticleT::EigenMatrix &covariance) = 0;
+  virtual void
+  initialise(const WeightedParticle::ParticleT &starting_point,
+             const WeightedParticle::ParticleT::EigenMatrix &covariance) = 0;
 
-  //! Trigger a global localization. Discards all particles and places them
-  //! uniformly in the free space in map.
+  //! @brief Trigger a global localization.
+  //!
+  //! Discards all particles and places them uniformly in the free space in map.
   virtual void global_localization() = 0;
 
-  //! Sample using motion model. Updates all particles.
+  //! @brief Sample using motion model. Updates all particles.
   //!
   //! @param odom_new  Estimated x_t
   //! @param odom_old  Estimated x_(t-1)
@@ -52,14 +54,14 @@ public:
                                const Odometry &odom_old,
                                float alpha[4]) = 0;
 
-  //! Update importance from observation data.
+  //! @brief Update importance from observation data.
   virtual void
   update_importance_from_observations(const LaserPointCloud &cloud) = 0;
 
-  //! Resample (using low variance sampling) and cluster particles.
+  //! @brief Resample (using low variance sampling) and cluster particles.
   virtual void resample_and_cluster() = 0;
 
-  //! Just cluster particles.
+  //! @brief Just cluster particles.
   virtual void cluster() = 0;
 
   //! @brief Set parameters
@@ -68,8 +70,8 @@ public:
   //! @a resample (depending on which parameters are changed).
   virtual void set_parameters(const Parameters::ParticleFilter &parameters) = 0;
 
-  //! Returns a single "average" pose, for localisation as well as covariance
-  //! matrix.
+  //! @brief Returns a single "average" pose, for localisation as well as
+  //!        covariance matrix.
   //!
   //! @return True if we could estimate a pose, otherwise false
   virtual bool get_estimated_pose(Pose2D<double> *pose,

@@ -32,6 +32,7 @@ class MapBase
   , protected ScaledMapLogic<2>
 {
 public:
+  //! Constructor
   MapBase();
 
   // See Map for documentation.
@@ -39,8 +40,8 @@ public:
 
   WeightedParticle::ParticleT generate_random_pose() const override;
 
-  //! Get the map state at the specified world pose. This takes care of offset
-  //! and resolution.i
+  //! @brief Get the map state at the specified world pose. This takes care of
+  //!        offset and resolution.
   MapState get_map_state_at(const WorldCoordinate &world_coord) const override;
 
   // Fix potential assert

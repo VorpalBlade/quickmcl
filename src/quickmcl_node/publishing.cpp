@@ -190,8 +190,7 @@ public:
         transform_broadcaster.sendTransform(trans_msg);
       }
 
-      if (pose_pub_enabled.load())
-      {
+      if (pose_pub_enabled.load()) {
         geometry_msgs::PoseWithCovarianceStamped estimated_pose;
         estimated_pose.header.stamp = t;
         estimated_pose.header.frame_id = parameters->ros.fixed_frame;
@@ -231,15 +230,15 @@ private:
   //! Global node handle
   ros::NodeHandle nh;
 
-  //! Connection/disconnection callback, that allows us to only do work when
-  //! someone is subscribing to us.
+  //! @brief Connection/disconnection callback, that allows us to only do work
+  //!        when someone is subscribing to us.
   void cloud_connection_callback()
   {
     point_cloud_pub_enabled.store(particle_pub.getNumSubscribers() > 0);
   }
 
-  //! Connection/disconnection callback, that allows us to only do work when
-  //! someone is subscribing to us.
+  //! @brief Connection/disconnection callback, that allows us to only do work
+  //!        when someone is subscribing to us.
   void pose_connection_callback()
   {
     pose_pub_enabled.store(estimated_pose_pub.getNumSubscribers() > 0);
@@ -265,7 +264,8 @@ private:
 
   //! @name ROS publishers
   //! @{
-  //! Publishes particle cloud
+
+  //! @brief Publishes particle cloud
   ros::Publisher particle_pub;
   //! Publishes internal map representation for debugging
   ros::Publisher likelihood_pub;
