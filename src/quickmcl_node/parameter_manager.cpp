@@ -16,8 +16,8 @@
 
 #include "quickmcl_node/parameter_manager.h"
 
-#include "quickmcl/parameters.h"
 #include "quickmcl/i_particle_filter.h"
+#include "quickmcl/parameters.h"
 
 #include <dynamic_reconfigure/server.h>
 #include <quickmcl/QuickMCLConfig.h>
@@ -40,9 +40,11 @@ static quickmcl::ResampleType to_resample_type(const std::string &value)
   }
 }
 
+//! Implementation class of ParameterManager
 class ParameterManager::Impl
 {
 public:
+  //! Constructor. See parent class.
   Impl(const std::shared_ptr<quickmcl::Parameters> &parameters,
        const ros::NodeHandle &nh_priv)
     : nh_priv(nh_priv)
@@ -53,6 +55,7 @@ public:
     dyn_srv.setCallback(boost::bind(&Impl::reconfig, this, _1, _2));
   }
 
+  //! See parent class
   void set_particle_filter(const std::shared_ptr<quickmcl::IParticleFilter> &pf)
   {
     this->pf = pf;
@@ -60,12 +63,15 @@ public:
   }
 
 private:
+  //! Private node handle
   ros::NodeHandle nh_priv;
+  //! Pointer to global parameter object
   std::shared_ptr<quickmcl::Parameters> parameters;
 
+  //! Pointer to particle filter (for notification of changed parameters)
   std::shared_ptr<quickmcl::IParticleFilter> pf;
 
-  quickmcl::QuickMCLConfig dyn_cfg;
+  //! Dynamic reconfiguration server
   dynamic_reconfigure::Server<quickmcl::QuickMCLConfig> dyn_srv;
 
   //! Load parameters that cannot be reconfigured on the fly
@@ -88,6 +94,7 @@ private:
                   false);
   }
 
+  //! Callback for dynamic reconfiguration.
   void reconfig(quickmcl::QuickMCLConfig &config, uint32_t level)
   {
     // Copy to parameters
@@ -162,8 +169,7 @@ private:
           to_resample_type(config.particle_filter_resample_type);
 
       // TODO: Set it
-      if (pf)
-      {
+      if (pf) {
         pf->set_parameters(parameters->particle_filter);
       }
     }
@@ -176,8 +182,6 @@ private:
       parameters->ros.post_date_transform = config.post_date_transform;
       parameters->ros.publish_particles = config.publish_particles;
     }
-
-    dyn_cfg = config;
   }
 };
 
@@ -190,7 +194,8 @@ ParameterManager::ParameterManager(
 ParameterManager::~ParameterManager()
 {}
 
-void ParameterManager::set_particle_filter(const std::shared_ptr<quickmcl::IParticleFilter> &pf)
+void ParameterManager::set_particle_filter(
+    const std::shared_ptr<quickmcl::IParticleFilter> &pf)
 {
   impl->set_particle_filter(pf);
 }

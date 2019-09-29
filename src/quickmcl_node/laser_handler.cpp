@@ -47,6 +47,10 @@ namespace {
 //! Type of callback to parent object
 using CloudCallback = std::function<void(const sensor_msgs::PointCloud2 &msg)>;
 
+//! @brief Helper class to subscribe to laser messages.
+//!
+//! This handles converting to point cloud (if needed) and to the proper TF
+//! frame.
 template<typename LaserMessage> struct LaserSub
 {
   //! See parent class for documentation.
@@ -100,6 +104,7 @@ template<typename LaserMessage> struct LaserSub
   tf2_ros::Buffer *const tf_buffer;
 };
 
+//! Callback for ROS laser scan message
 template<>
 void LaserSub<sensor_msgs::LaserScan>::laser_callback(
     const sensor_msgs::LaserScan::ConstPtr &msg)
@@ -115,6 +120,7 @@ void LaserSub<sensor_msgs::LaserScan>::laser_callback(
   callback(cloud);
 }
 
+//! Callback for ROS point cloud message
 template<>
 void LaserSub<sensor_msgs::PointCloud2>::laser_callback(
     const sensor_msgs::PointCloud2::ConstPtr &msg)

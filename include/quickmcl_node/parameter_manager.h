@@ -40,7 +40,8 @@ public:
   ~ParameterManager();
 
   //! Set particle filter pointer
-  void set_particle_filter(const std::shared_ptr<quickmcl::IParticleFilter>& pf);
+  void
+  set_particle_filter(const std::shared_ptr<quickmcl::IParticleFilter> &pf);
 
 private:
   //! Pimpl idiom
