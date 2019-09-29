@@ -24,7 +24,7 @@
 
 namespace quickmcl {
 
-//! Implements statistics on a set of particle clouds
+//! @brief Implements statistics on a set of particle clouds
 //!
 //! An interesting property is that we can combine multiple instances with
 //! simple additions of the members as long as finalise() hasn't been called.
@@ -39,7 +39,7 @@ struct ParticleCloudStatistics
   //! Number of samples added to this set of statistics
   size_t sample_count = 0;
 
-  //! Mean & temporary storage for total during computation.
+  //! @brief Mean & temporary storage for total during computation.
   //!
   //! In the end, only the first three components are valid
   Eigen::Vector4d mean = Eigen::Vector4d::Zero();

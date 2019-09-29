@@ -27,7 +27,7 @@
 
 namespace quickmcl {
 
-//! Simplified (compared to the one from geometry_msgs) 2D pose structure
+//! @brief 2D pose structure
 //!
 //! @tparam T Floating point type to use
 template<typename T = float> struct Pose2D
@@ -90,7 +90,7 @@ template<typename T = float> struct Pose2D
   //! Normalise the angle to [-pi, pi]
   void normalise() { theta = normalise_angle(theta); }
 
-  //! Operator to convert to pose
+  //! @brief Operator to convert to pose
   //!
   //! Note! Only sensible with normalised angle.
   inline explicit operator geometry_msgs::Pose() const

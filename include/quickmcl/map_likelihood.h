@@ -35,9 +35,10 @@ namespace quickmcl {
 class MapLikelihood final : public MapBase
 {
 public:
+  //! Constructor
   MapLikelihood();
 
-  //! Set parameters, will only take effect on the next new_map() call
+  //! @brief Set parameters, will only take effect on the next new_map() call
   //!
   //! @param parameters Parameters for this class.
   void set_parameters(const Parameters::LikelihoodMap &parameters) override;
@@ -48,8 +49,8 @@ public:
   double update_importance(const LaserPointCloud &cloud,
                            ParticleCollection *particles) const override;
 
-  //! Get the likelihood map as an occupancy grid, for visualisation and
-  //! debugging with rviz.
+  //! @brief Get the likelihood map as an occupancy grid, for visualisation and
+  //!        debugging with rviz.
   nav_msgs::OccupancyGrid get_likelihood_as_gridmap() const override;
 
   // Fix potential assert
@@ -58,7 +59,8 @@ private:
   //! Parameters from command line / launch file
   Parameters::LikelihoodMap parameters;
 
-  //! The actual likelihood map, of the same dimension as the occupancy grid.
+  //! @brief The actual likelihood map, of the same dimension as the occupancy
+  //!        grid.
   //!
   //! If USE_DISTANCE_MAP is enabled, this is distances to occupied cells.
   //! If USE_DISTANCE_MAP is not enabled, this is a sort of ill-defined Gaussian
@@ -81,8 +83,8 @@ private:
   //! Probability at max distance
   double max_distance_probability = 0.01;
 
-  //! Get the probability at the specified world pose. This takes care of offset
-  //! and resolution.
+  //! @brief Get the probability at the specified world pose. This takes care of
+  //!        offset and resolution.
   double get_probability_at(const WorldCoordinate &world_coord) const;
 
 #if QUICKMCL_MAP_LIKELIHOOD_DEBUG_PUB == 1

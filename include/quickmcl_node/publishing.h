@@ -59,7 +59,7 @@ public:
   //! Publish the particle cloud.
   void publish_cloud();
 
-  //! Publishes the estimated pose.
+  //! @brief Publishes the estimated pose.
   //!
   //! @param t                    Time of laser scan, transform post-dating will
   //!                             be based on this.

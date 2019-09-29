@@ -23,7 +23,7 @@
 
 namespace quickmcl {
 
-//! Class for timing how long a segment of code takes
+//! @brief Class for timing how long a segment of code takes
 //!
 //! Reports in destructor (RAII) or prematurely via finish()
 class CodeTimer

@@ -39,18 +39,19 @@ public:
   //! Constructor
   explicit ParticleFilter(const std::shared_ptr<Map> &map);
 
-  //! Initialise to "known" position (as a normal distribution).
+  //! @brief Initialise to "known" position (as a normal distribution).
   //!
   //! @param starting_point Central point of particle cloud
   //! @param covariance Covariance matrix (x, y, theta)
   void initialise(const WeightedParticle::ParticleT &starting_point,
                   const WeightedParticle::ParticleT::EigenMatrix &covariance);
 
-  //! Trigger a global localization. Discards all particles and places them
-  //! uniformly in the free space in map.
+  //! @brief Trigger a global localization.
+  //!
+  //! Discards all particles and places them uniformly in the free space in map.
   void global_localization();
 
-  //! Sample using motion model. Updates all particles.
+  //! @brief Sample using motion model. Updates all particles.
   //!
   //! @param odom_new  Estimated x_t
   //! @param odom_old  Estimated x_(t-1)
@@ -104,8 +105,8 @@ private:
     ParticleCollection particles;
   };
 
-  //! The particle data sets. There are two sets that we switch between to
-  //! reduce allocations.
+  //! @brief The particle data sets. There are two sets that we switch between
+  //!        to reduce allocations.
   DataSet data_sets[2];
   //! Index into @a particles for the current cloud.
   uint8_t current_data_set = 0;
@@ -136,7 +137,7 @@ private:
   //! Normalise the weights of all particles when the total isn't known
   inline void normalise_weights();
 
-  //! Normalise the weights of all particles when the total is known
+  //! @brief Normalise the weights of all particles when the total is known
   //!
   //! @param total_weight Known total weight
   inline void normalise_weights(double total_weight);
@@ -144,7 +145,8 @@ private:
   //! Set all weights to be equal.
   inline void equalise_weights();
 
-  //! Compute the cluster statistics
+  //! @brief Compute the cluster statistics
+  //!
   //! Since cluster ID 0 is invalid that is used for over-all filter statistics
   std::vector<ParticleCloudStatistics>
   compute_cluster_statistics(ParticleCloudStatistics *global_statistics) const;

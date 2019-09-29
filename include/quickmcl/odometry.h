@@ -25,10 +25,10 @@
 
 namespace quickmcl {
 
-//! Type for odometry readings
+//! @brief Type for odometry readings
 using Odometry = Pose2D<double>;
 
-//! Sample using motion model. Updates all particles.
+//! @brief Sample using motion model. Updates all particles.
 //!
 //! @param odom_new   Estimated x_t
 //! @param odom_old   Estimated x_(t-1)

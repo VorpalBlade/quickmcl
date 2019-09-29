@@ -316,8 +316,8 @@ private:
   //! Counter for how often to resample.
   uint32_t resample_counter = 0;
 
-  //! Used to force calculating particle weights even when not moving after a
-  //! pose reset from rviz.
+  //! @brief Used to force calculating particle weights even when not moving
+  //!        after a pose reset from rviz.
   bool pose_reset = false;
 };
 

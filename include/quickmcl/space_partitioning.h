@@ -82,7 +82,7 @@ public:
   //! Assign cluster IDs to all cells.
   void assign_clusters();
 
-  //! Get highest valid cluster ID.
+  //! @brief Get highest valid cluster ID.
   //!
   //! @return Number of clusters.
   //!         Valid range for clusters is [0, return value - 1].
