@@ -30,17 +30,25 @@ class IParticleFilter;
 class PoseRestorer
 {
 public:
+  //! @brief Constructor
+  //! @param nh_priv  Private node handle
+  //! @param filter   Pointer to particle filter
   PoseRestorer(const ros::NodeHandle &nh_priv,
                const std::shared_ptr<IParticleFilter> &filter);
 
+  //! Store the pose from the particle filter to the parameter server.
   void store_pose();
 
+  //! Restore the pose from the parameter server to the particle filter.
   void restore_pose();
 
 private:
+  //! Private node handle
   ros::NodeHandle nh_priv;
+  //! Pointer to particle filter.
   std::shared_ptr<IParticleFilter> filter;
 
+  //! Get parameter if set and not NaN.
   void get_param_nan_safe(const std::string &name,
                           double *output,
                           double default_value);

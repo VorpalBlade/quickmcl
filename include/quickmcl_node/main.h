@@ -61,6 +61,7 @@ private:
 
   //! Global parameters from launch file
   std::shared_ptr<quickmcl::Parameters> parameters;
+  //! Parameter manager in use (for dynamic reconfiguration)
   std::shared_ptr<quickmcl_node::ParameterManager> parameter_manager;
 
   //! Map object used for importance computations.
