@@ -40,14 +40,15 @@
   <depend>roscpp</depend>
   <depend>sensor_msgs</depend>
   <depend>std_srvs</depend>
+  <depend>tf2</depend>
   <depend>tf2_eigen</depend>
-  <depend>tf2_geometry_msgs</depend>
   <depend>tf2_ros</depend>
-  <depend>visualization_msgs</depend>
-
   <build_depend>dynamic_reconfigure</build_depend>
-  <build_depend>eigen</build_depend>
+  <build_depend>tf2_geometry_msgs</build_depend>
+  <build_depend>visualization_msgs</build_depend>
   <exec_depend>dynamic_reconfigure</exec_depend>
+  <exec_depend>tf2_geometry_msgs</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
   <test_depend>rosunit</test_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
