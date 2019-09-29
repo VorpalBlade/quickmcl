@@ -8,23 +8,24 @@ set(CMAKE_CXX_STANDARD 14)
 # catkin dependencies here.
 set(${PROJECT_NAME}_catkin_deps_private
     dynamic_reconfigure
-    geometry_msgs
     laser_geometry
     message_generation
     message_runtime
-    nav_msgs
-    sensor_msgs
+    pcl_conversions
     std_srvs
+    tf2_eigen
     tf2_geometry_msgs
+    tf2_ros
     visualization_msgs
 )
 
 set(${PROJECT_NAME}_catkin_deps_public
-    pcl_conversions
+    geometry_msgs
+    nav_msgs
     pcl_ros
     roscpp
-    tf2_eigen
-    tf2_ros
+    sensor_msgs
+    tf2
 )
 
 ## Find catkin macros and libraries
@@ -36,7 +37,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -148,6 +149,7 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIRS}
 )
 
