@@ -59,7 +59,7 @@ These parameters are for changing names when communicating with the rest of ROS:
 
 Other ROS communication parameters:
 
-* `save_pose_period` (`double`, default: 2.0):
+* `~save_pose_period` (`double`, default: 2.0):
   How often (in seconds) to save the pose to the parameter server. This will be
   reloaded on startup. Set to 0 to disable saving.
 * `~post_date_transform` (`double`, default: 0.1):
