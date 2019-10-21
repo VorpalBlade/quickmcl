@@ -58,9 +58,10 @@ These parameters are for changing names when communicating with the rest of ROS:
 
 Other ROS communication parameters:
 
-* `~save_pose_period` (`double`, default: 2.0):
+* `~save_pose_period` (`double`, default: 0.0):
   How often (in seconds) to save the pose to the parameter server. This will be
-  reloaded on startup. Set to 0 to disable saving.
+  reloaded on startup. Set to 0 to disable saving. Note that this has quite a
+  large performance impact. **Does not support dynamic reconfiguration.**
 * `~post_date_transform` (`double`, default: 0.1):
   How much to post-date transform, should be similar to delta between scans.
   Helps rviz get less glitchy and in general indicates that this estimate is
@@ -74,21 +75,12 @@ Other ROS communication parameters:
 
 ### Initial pose
 
-None of these support dynamic reconfiguration. They are also written to unless
-`~save_pose_period` is 0.
+This exists to allow restoring the pose after restarting QuickMCL. Thus this
+value is only read on startup and does not support dynamic reconfiguration.
+The value is only written to if `~save_pose_period` is greater than 0.
 
-* `~initial_pose_x` (`double`, default: 0.0):
-  Initial pose (x component). 
-* `~initial_pose_y` (`double`, default: 0.0):
-  Initial pose (y component).
-* `~initial_pose_a` (`double`, default: 0.0):
-  Initial pose (θ component).
-* `~initial_cov_xx` (`double`, default: 0.5²):
-  Initial covariance (x² component).
-* `~initial_cov_yy` (`double`, default: 0.5²):
-  Initial covariance (y² component).
-* `~initial_cov_aa` (`double`, default: 0.1²):
-  Initial covariance (θ² component).
+* `~initial_pose` (`double[]`, default: `[0.0, 0.0, 0.0, 0.5², 0.5², 0.1²]`):
+  Initial pose array, (x, y, θ, x², y², θ²).
 
 ### Motion model
 

@@ -49,7 +49,7 @@ private:
   std::shared_ptr<IParticleFilter> filter;
 
   //! Get parameter if set and not NaN.
-  void get_param_nan_safe(const std::string &name,
+  void get_param_nan_safe(const std::vector<double> &v, size_t index,
                           double *output,
                           double default_value);
 };

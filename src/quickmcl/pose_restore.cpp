@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "quickmcl/pose_restore.h"
 
+#include "quickmcl/timer.h"
 #include "quickmcl/i_particle_filter.h"
 
 #include <cmath>
@@ -42,14 +43,15 @@ void PoseRestorer::store_pose()
     return;
   }
 
-  // AMCL compatible names
-  nh_priv.setParam("initial_pose_x", pose.x);
-  nh_priv.setParam("initial_pose_y", pose.y);
-  nh_priv.setParam("initial_pose_a", pose.theta);
-  // This discards some information, but it is likely good enough
-  nh_priv.setParam("initial_cov_xx", covariance(0, 0));
-  nh_priv.setParam("initial_cov_yy", covariance(1, 1));
-  nh_priv.setParam("initial_cov_aa", covariance(2, 2));
+  quickmcl::CodeTimer timer("Writing parameters");
+  std::vector<double> v;
+  v.push_back(pose.x);
+  v.push_back(pose.y);
+  v.push_back(pose.theta);
+  v.push_back(covariance(0, 0));
+  v.push_back(covariance(1, 1));
+  v.push_back(covariance(2, 2));
+  nh_priv.setParam("initial_pose", v);
 }
 
 void PoseRestorer::restore_pose()
@@ -57,28 +59,37 @@ void PoseRestorer::restore_pose()
   Pose2D<double> pose{0, 0, 0};
   Eigen::Matrix3d covariance = Eigen::Matrix3d::Identity();
 
-  get_param_nan_safe("initial_pose_x", &pose.x, 0.0);
-  get_param_nan_safe("initial_pose_y", &pose.y, 0.0);
-  get_param_nan_safe("initial_pose_a", &pose.theta, 0.0);
-  get_param_nan_safe("initial_pose_xx", &covariance(0, 0), 0.5 * 0.5);
-  get_param_nan_safe("initial_pose_yy", &covariance(1, 1), 0.5 * 0.5);
-  get_param_nan_safe("initial_pose_aa", &covariance(2, 2), 0.1 * 0.1);
+  std::vector<double> v;
+  if (nh_priv.getParam("initial_pose", v))
+  {
+    get_param_nan_safe(v, 0, &pose.x, 0.0);
+    get_param_nan_safe(v, 1, &pose.y, 0.0);
+    get_param_nan_safe(v, 2, &pose.theta, 0.0);
+    get_param_nan_safe(v, 3, &covariance(0, 0), 0.5 * 0.5);
+    get_param_nan_safe(v, 4, &covariance(1, 1), 0.5 * 0.5);
+    get_param_nan_safe(v, 5, &covariance(2, 2), 0.1 * 0.1);
+  }
+
 
   filter->initialise(
       quickmcl::WeightedParticle::ParticleT(pose),
       covariance.cast<quickmcl::WeightedParticle::ParticleT::Scalar>());
 }
 
-void PoseRestorer::get_param_nan_safe(const std::string &name,
+void PoseRestorer::get_param_nan_safe(const std::vector<double>& v,
+                                      size_t index,
                                       double *output,
                                       double default_value)
 {
-  double tmp;
-  nh_priv.param(name, tmp, default_value);
-  if (!std::isnan(tmp)) {
-    *output = tmp;
+  if (index >= v.size())
+  {
+    ROS_WARN_STREAM("Ignoring initial_pose[" << index << "] because it is missing");
+    *output = default_value;
+  }
+  else if (!std::isnan(v[index])) {
+    *output = v[index];
   } else {
-    ROS_WARN_STREAM("Ignoring " << name << " because of NaN");
+    ROS_WARN_STREAM("Ignoring initial_pose[" << index << "] because of NaN");
     *output = default_value;
   }
 }
