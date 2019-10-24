@@ -224,7 +224,10 @@ public:
 
     // Time to actually do something with the data:
     quickmcl::LaserPointCloud cloud;
-    quickmcl::from_ros_msg(msg, &cloud);
+    {
+      quickmcl::CodeTimer timer("PointCloud2 -> PCL");
+      quickmcl::from_ros_msg(msg, &cloud);
+    }
 
     // Check that we have at least some particles, this can be false since we
     // discard particles outside of free space in the map. If localisation gets
@@ -266,15 +269,21 @@ public:
       filter->cluster();
     }
 
-    // Publish stuff
-    publishing->publish_cloud();
-    publishing->publish_estimated_pose(msg.header.stamp, recompute_transform);
+    {
+      quickmcl::CodeTimer timer("Publishing localisation result");
+      // Publish stuff
+      publishing->publish_cloud();
+      publishing->publish_estimated_pose(msg.header.stamp, recompute_transform);
+    }
 
-    ros::Time now = ros::Time::now();
-    if (!save_pose_period.isZero() &&
-        (now - save_pose_last_ts) >= save_pose_period) {
-      pose_restorer->store_pose();
-      save_pose_last_ts = now;
+    {
+      quickmcl::CodeTimer timer("Storing new initial_pose");
+      ros::Time now = ros::Time::now();
+      if (!save_pose_period.isZero() &&
+          (now - save_pose_last_ts) >= save_pose_period) {
+        pose_restorer->store_pose();
+        save_pose_last_ts = now;
+      }
     }
   }
 
