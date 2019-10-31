@@ -113,7 +113,7 @@ public:
   //! See parent class for documentation.
   void publish_cloud()
   {
-    if (!parameters->ros.publish_particles || !point_cloud_pub_enabled.load()) {
+    if (!parameters->ros.publish_particles || !point_cloud_pub_enabled) {
       return;
     }
 
@@ -190,7 +190,7 @@ public:
         transform_broadcaster.sendTransform(trans_msg);
       }
 
-      if (pose_pub_enabled.load()) {
+      if (pose_pub_enabled) {
         geometry_msgs::PoseWithCovarianceStamped estimated_pose;
         estimated_pose.header.stamp = t;
         estimated_pose.header.frame_id = parameters->ros.fixed_frame;
@@ -234,20 +234,20 @@ private:
   //!        when someone is subscribing to us.
   void cloud_connection_callback()
   {
-    point_cloud_pub_enabled.store(particle_pub.getNumSubscribers() > 0);
+    point_cloud_pub_enabled = particle_pub.getNumSubscribers() > 0;
   }
 
   //! @brief Connection/disconnection callback, that allows us to only do work
   //!        when someone is subscribing to us.
   void pose_connection_callback()
   {
-    pose_pub_enabled.store(estimated_pose_pub.getNumSubscribers() > 0);
+    pose_pub_enabled = estimated_pose_pub.getNumSubscribers() > 0;
   }
 
   //! Atomic variable for tracking if point cloud publication is enabled
-  std::atomic<bool> point_cloud_pub_enabled;
+  bool point_cloud_pub_enabled;
   //! Atomic variable for tracking if pose publication is enabled
-  std::atomic<bool> pose_pub_enabled;
+  bool pose_pub_enabled;
 
   //! Global parameters from launch file
   std::shared_ptr<quickmcl::Parameters> parameters;
