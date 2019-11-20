@@ -232,6 +232,10 @@ add_dependencies(${PROJECT_NAME}_node
   ${PROJECT_NAME}_gencfg
 )
 
+# We cannot use Eigen's non-permissive parts since we are using Apache 2.0
+target_compile_definitions(${PROJECT_NAME} PRIVATE EIGEN_MPL2_ONLY)
+target_compile_definitions(${PROJECT_NAME}_node PRIVATE EIGEN_MPL2_ONLY)
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
