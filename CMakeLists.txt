@@ -232,7 +232,7 @@ add_dependencies(${PROJECT_NAME}_node
   ${PROJECT_NAME}_gencfg
 )
 
-# We cannot use Eigen's non-permissive parts since we are using Apache 2.0
+# We cannot use Eigen's non-permissive parts since we are switching to either MPL or Apache 2.0 soon
 target_compile_definitions(${PROJECT_NAME} PRIVATE EIGEN_MPL2_ONLY)
 target_compile_definitions(${PROJECT_NAME}_node PRIVATE EIGEN_MPL2_ONLY)
 

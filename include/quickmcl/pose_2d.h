@@ -103,28 +103,23 @@ template<typename T = float> struct Pose2D
     return pose;
   }
 
-  //! Operator to convert the pose to a 3D transform
-  inline explicit operator Eigen::Affine3d() const
+  //! Operator to convert the pose to an Eigen 3D transform
+  template<typename ScalarT, int Options>
+  inline explicit operator Eigen::Transform<ScalarT,3,Options>() const
   {
-    Eigen::Affine3d transform = Eigen::Affine3d::Identity();
+    using TransformT = Eigen::Transform<ScalarT,3,Options>;
+    TransformT transform = TransformT::Identity();
     transform.translate(Eigen::Vector3d(x, y, 0));
     transform.rotate(Eigen::AngleAxisd(theta, Eigen::Vector3d(0, 0, 1)));
     return transform;
   }
 
-  //! Operator to convert the pose to a 2D transform
-  inline explicit operator Eigen::Affine2f() const
+  //! Operator to convert the pose to an Eigen 2D transform
+  template<typename ScalarT, int Options>
+  inline explicit operator Eigen::Transform<ScalarT,2,Options>() const
   {
-    Eigen::Affine2f transform = Eigen::Affine2f::Identity();
-    transform.translate(Eigen::Vector2f(x, y));
-    transform.rotate(Eigen::Rotation2Df(theta));
-    return transform;
-  }
-
-  //! Operator to convert the pose to a 2D transform
-  inline explicit operator Eigen::Isometry2f() const
-  {
-    Eigen::Isometry2f transform = Eigen::Isometry2f::Identity();
+    using TransformT = Eigen::Transform<ScalarT,2,Options>;
+    TransformT transform = TransformT::Identity();
     transform.translate(Eigen::Vector2f(x, y));
     transform.rotate(Eigen::Rotation2Df(theta));
     return transform;
