@@ -19,6 +19,7 @@
 #include "quickmcl/map_types.h"
 #include "quickmcl/scaled_map.h"
 
+#include <random>
 #include <vector>
 
 //! @file
