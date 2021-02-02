@@ -3,12 +3,12 @@ jobs:
   build:
     working_directory: /tmp/repository
     docker:
-      - image: shadowrobot/build-tools:xenial-kinetic
+      - image: shadowrobot/build-tools:bionic-melodic
         environment:
           toolset_branch: master
           server_type: circle
-          ros_release_name: kinetic
-          ubuntu_version_name: xenial
+          ros_release_name: bionic
+          ubuntu_version_name: melodic
           used_modules: check_cache,check_build,software_tests,check_install,cpp_code_coverage,codecov_tool
 
     steps:
