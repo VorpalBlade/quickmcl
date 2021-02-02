@@ -14,8 +14,8 @@ turned out good enough it was worth putting it up publicly after the fact. I
 might make improvements to it after the fact if there is any interest in the
 project.
 
-This has only been tested with ROS Kinetic, but I see no reason why it shouldn't
-work with newer ROS.
+This has been tested with ROS Kinetic, Melodic & Noetic, but I see no reason
+why it shouldn't work with newer ROS.
 
 Just like AMCL this package estimates the location of the `base_link` TF frame
 in the `map` frame, but then publishes the difference between `map` and `odom`.
