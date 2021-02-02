@@ -12,7 +12,6 @@ set(${PROJECT_NAME}_catkin_deps_private
     message_generation
     message_runtime
     pcl_conversions
-    std_srvs
     tf2_eigen
     tf2_geometry_msgs
     tf2_ros
@@ -25,6 +24,7 @@ set(${PROJECT_NAME}_catkin_deps_public
     pcl_ros
     roscpp
     sensor_msgs
+    std_srvs
     tf2
 )
 

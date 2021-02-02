@@ -30,6 +30,9 @@
   <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
 
+  <build_depend>dynamic_reconfigure</build_depend>
+  <build_depend>tf2_geometry_msgs</build_depend>
+  <build_depend>visualization_msgs</build_depend>
   <depend>geometry_msgs</depend>
   <depend>laser_geometry</depend>
   <depend>message_generation</depend>
@@ -40,15 +43,14 @@
   <depend>roscpp</depend>
   <depend>sensor_msgs</depend>
   <depend>std_srvs</depend>
-  <depend>tf2</depend>
   <depend>tf2_eigen</depend>
   <depend>tf2_ros</depend>
-  <build_depend>dynamic_reconfigure</build_depend>
-  <build_depend>tf2_geometry_msgs</build_depend>
-  <build_depend>visualization_msgs</build_depend>
+  <depend>tf2</depend>
   <exec_depend>dynamic_reconfigure</exec_depend>
   <exec_depend>tf2_geometry_msgs</exec_depend>
   <exec_depend>visualization_msgs</exec_depend>
+  <test_depend>libgmock-dev</test_depend>
+  <test_depend>gtest</test_depend>
   <test_depend>rosunit</test_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
