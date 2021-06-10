@@ -24,6 +24,22 @@ As inputs to the node the change over time in the `odom` to `base_link`
 transform is used, as well as the point cloud from the laser scanner. In
 addition a map is required.
 
+## Installation
+
+You can build the software as normal ROS 1 software. However, note that
+QuickMCL performs poorly in debug builds. This is due to the use of the Eigen
+library. An optimised build is essential to good performance. The difference
+in processing time is about 20x!
+
+If you use catkin_make build with
+`catkin_make --cmake-args -DCMAKE_BUILD_TYPE=Release`. If you use catkin-tools
+you can set the CMake flags using `catkin config`, for example:
+`catkin config --cmake-args -DCMAKE_BUILD_TYPE=Release`
+
+If you want to build parts of your software as a debug build still, consider
+taking a look at [workspace overlaying](http://wiki.ros.org/catkin/Tutorials/workspace_overlaying).
+
+
 ## Documentation
 
 How to use the software is documented in a [separate file](doc/using.md).
